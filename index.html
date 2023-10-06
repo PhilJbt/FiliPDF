@@ -7,6 +7,9 @@
     <link href="res/dep/bootstrap/bootstrap.min.css" rel="stylesheet">
     <script src="res/dep/bootstrap/bootstrap.bundle.min.js"></script>
     <style>
+        body {
+            user-select: none;
+        }
         label.lbl_cnt:after {
             content: " : " attr(data-content);
         }
@@ -26,6 +29,9 @@
         .txt_dsc {
             display:inline;
             font-size:14px;
+        }
+        .tooltip {
+            pointer-events: none;
         }
     </style>
 </head>
@@ -75,12 +81,12 @@
             </div>
             
             <div>
-                <input class="form-control" class="lbl_cnt" type="range" id="inp_fntSiz" min="10" max="40" step="5" value="10" />
+                <input class="form-control" class="lbl_cnt" type="range" id="inp_fntSiz" min="10" max="40" step="5" value="20" />
                 <label class="trans lbl_cnt" for="inp_fntSiz" id="inp_fntSiz_lbl" data-content=""></label>
             </div>
 
             <div>
-                <input class="form-control" class="lbl_cnt" type="range" id="inp_linSpc" min="0" max="2" step="0.1" value="1" />
+                <input class="form-control" class="lbl_cnt" type="range" id="inp_linSpc" min="0.5" max="3" step="0.1" value="1" />
                 <label class="trans lbl_cnt" for="inp_linSpc" id="inp_linSpc_lbl" data-content=""></label>
             </div>
 
@@ -110,8 +116,9 @@
             </div>
 
             <div class="btn-group flex-row justify-content-center mt-5" role="group">
-                <button type="button" onclick="proc(true)" id="inp_prev" class="btn btn-secondary trans" disabled>Button</button>
-                <button type="button" onclick="proc(false)" id="inp_save" class="btn btn-primary trans" disabled>Primary button</button>
+                <button type="button" onclick="proc(true)" id="inp_prev" class="btn btn-primary trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=""disabled></button>
+                <button type="button" onclick="proc(false)" id="inp_save" class="btn btn-success trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=""disabled></button>
+                <button type="button" onclick="reset()" id="inp_rset" class="btn btn-secondary trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=""></button>
             </div>
 
             <div class="d-flex flex-column">
@@ -145,17 +152,24 @@
         }
     }, false);
 
-    function init() {
+    function reset() {
         document.querySelector('#inp_filPck').value = null;
         document.querySelector('#inp_fntClr').value = '#ff0080';
         document.querySelector('#inp_texBld').value = 'Exclusion';
-        document.querySelector('#inp_fntSiz').value = 10;
+        document.querySelector('#inp_fntSiz').value = 20;
         document.querySelector('#inp_linSpc').value = 1;
         document.querySelector('#inp_texOpa').value = 1;
         document.querySelector('#inp_texRec').value = '';
         document.querySelector('#inp_texSbj').value = '';
         document.querySelector('#inp_imgQly').value = 2;
         document.querySelector('#inp_date').value = new Date().toISOString().substring(0, 10);
+
+        document.querySelector('#inp_prev').setAttribute('disabled', 'disabled');
+        document.querySelector('#inp_save').setAttribute('disabled', 'disabled');
+    }
+
+    function init() {
+        reset();
         
         document.querySelectorAll('label.lbl_cnt').forEach((div) => {
             div.setAttribute('data-content', document.querySelector(`#${div.getAttribute('for')}`).value);
@@ -185,8 +199,12 @@
     }
 
     function initComp() {
-        const exampleEl = document.querySelector('div[data-bs-toggle="tooltip"]');
-        const tooltip = new bootstrap.Tooltip(exampleEl, {});
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                trigger : 'hover'
+            });
+        })
     }
 
     function translate() {
@@ -209,12 +227,16 @@
                     inp_texSbj_lbl: 'Texte 2',
                     inp_texSbj_pch: 'Sujet',
                     inp_imgQly_lbl: 'Qualité de l\'image',
-                    tltp_imgQly: 'Cette option impacte grandement le temps de traitement.',
+                    tltp_imgQly: 'Cette option impacte grandement la durée de traitement.',
                     inp_date_lbl: 'Date',
-                    txt_prev: 'Prévisualisation du filigrane de la première page de votre document :',
+                    txt_prev: 'Prévisualisation :',
                     inp_prev: 'Prévisualiser',
+                    inp_prev_pvr: 'Prévisualise la première page du PDF avec filigrane.',
                     inp_save: 'Sauvegarder',
-                    alrt_xprt: '<p class="p_alert">L\'export peut prendre un certain moment,</p><p class="p_alert">merci de patienter.</p>',
+                    inp_save_pvr: 'Enregistre le PDF avec filigrane.',
+                    inp_rset: 'Réinitialiser',
+                    inp_rset_pvr: 'Réinitialise les options par défaut.',
+                    alrt_xprt: '<p class="p_alert">Veuillez patientez, même si la page se fige.</p>',
                     inp_texBld_dsc: '(exemples)',
                     img_example:'res/img/example_fr.jpg',
                 };
@@ -236,12 +258,16 @@
                     inp_texSbj_lbl: 'Text 2',
                     inp_texSbj_pch: 'Subject',
                     inp_imgQly_lbl: 'Quality',
-                    tltp_imgQly: 'This option has a major impact on processing time.',
+                    tltp_imgQly: 'This option has a major impact on processing duration.',
                     inp_date_lbl: 'Date',
-                    txt_prev: 'Preview of the watermark on the first page of your document:',
+                    txt_prev: 'Preview:',
                     inp_prev: 'Preview',
+                    inp_prev_pvr: 'Preview the first page of the watermarked PDF.',
                     inp_save: 'Save',
-                    alrt_xprt: '<p class="p_alert">The export may take a while,</p><p class="p_alert">please be patient.<p>',
+                    inp_save_pvr: 'Saves PDF with watermark.',
+                    inp_rset: 'Reset',
+                    inp_rset_pvr: 'Reset options to default.',
+                    alrt_xprt: '<p class="p_alert">Please wait, even if the page freezes.<p>',
                     inp_texBld_dsc: '(examples)',
                     img_example:'res/img/example_en.jpg',
                 };
@@ -252,7 +278,11 @@
         document.querySelector('#inp_texSbj').placeholder = arrTexts['inp_texSbj_pch'];
         document.querySelector('#alrt_xprt').innerHTML = arrTexts['alrt_xprt'];
         document.querySelector('#inp_texBld_dsc').innerHTML = arrTexts['inp_texBld_dsc'];
+
         document.querySelector('#tltp_imgQly').setAttribute('data-bs-title', arrTexts['tltp_imgQly']);
+        document.querySelector('#inp_prev').setAttribute('data-bs-title', arrTexts['inp_prev_pvr']);
+        document.querySelector('#inp_save').setAttribute('data-bs-title', arrTexts['inp_save_pvr']);
+        document.querySelector('#inp_rset').setAttribute('data-bs-title', arrTexts['inp_rset_pvr']);
 
         document.getElementById('img_example').src = arrTexts['img_example'];
         
@@ -375,14 +405,13 @@
                         x: 0,
                         y: heightCurr,
                         size: textSize,
-                        lineHeight: (textSize + (textSize / 2)) * parseFloat(document.querySelector('#inp_linSpc').value),
                         font: helveticaFont,
                         color: PDFLib.rgb(arrColor.r, arrColor.g, arrColor.b),
                         blendMode: document.querySelector('#inp_texBld').value,
                         opacity: parseFloat(document.querySelector('#inp_texOpa').value),
                         rotate: PDFLib.degrees(45),
                     });
-                    heightCurr += textHeight * 5;
+                    heightCurr += (textSize * 5) * parseFloat(document.querySelector('#inp_linSpc').value);
                 }
             }
 
