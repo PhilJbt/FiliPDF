@@ -23,6 +23,10 @@
             padding: 0;
             margin: 0;
         }
+        .txt_dsc {
+            display:inline;
+            font-size:14px;
+        }
     </style>
 </head>
 <body>
@@ -56,7 +60,7 @@
                         <option value="Overlay">Overlay</option>
                         <option value="Screen">Screen</option>
                     </select>
-                    <label class="trans lbl_cnt" for="inp_texBld" id="inp_texBld_lbl" data-content=""></label>
+                    <label class="trans" for="inp_texBld" id="inp_texBld_lbl"></label> <p class="txt_dsc"><a id="inp_texBld_dsc" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-light" href="#"></a></p>
                 </div>
                 
                 <div>
@@ -75,16 +79,16 @@
                 </div>
 
                 <div>
-                    <input class="form-control" type="text" id="inp_texRec" placeholder="" />
+                    <input class="form-control" type="text" id="inp_texRec" />
                     <label class="trans" for="inp_texRec" id="inp_texRec_lbl" data-content=""></label>
                 </div>
 
                 <div>
-                    <input class="form-control" type="text" id="inp_texSbj" placeholder="" />
+                    <input class="form-control" type="text" id="inp_texSbj" />
                     <label class="trans" for="inp_texSbj" id="inp_texSbj_lbl" data-content=""></label>
                 </div>
 
-                <div>
+                <div id="tltp_imgQly" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="">
                     <input class="form-control" class="lbl_cnt" type="range" id="inp_imgQly" min="1" max="5" step="1" value="2" />
                     <label class="trans lbl_cnt" for="inp_imgQly" id="inp_imgQly_lbl" data-content=""></label>
                 </div>
@@ -126,6 +130,7 @@
         if (e.target.readyState === "complete") {
             init();
             translate();
+            initComp();
         }
     }, false);
 
@@ -168,6 +173,11 @@
         });
     }
 
+    function initComp() {
+        const exampleEl = document.querySelector('div[data-bs-toggle="tooltip"]');
+        const tooltip = new bootstrap.Tooltip(exampleEl, {});
+    }
+
     function translate() {
         let arrTexts = {};
         const lang = navigator.language || navigator.userLanguage;
@@ -188,11 +198,13 @@
                     inp_texSbj_lbl: 'Texte 2',
                     inp_texSbj_pch: 'Sujet',
                     inp_imgQly_lbl: 'Qualité de l\'image',
+                    tltp_imgQly: 'Cette option impacte grandement le temps de traitement.',
                     inp_date_lbl: 'Date',
                     txt_prev: 'Prévisualisation du filigrane de la première page de votre document :',
                     inp_prev: 'Prévisualiser',
                     inp_save: 'Sauvegarder',
                     alrt_xprt: '<p class="p_alert">L\'export peut prendre un certain moment,</p><p class="p_alert">merci de patienter.</p>',
+                    inp_texBld_dsc: '(exemples)',
                     img_example:'res/img/example_fr.jpg',
                 };
                 break;
@@ -213,11 +225,13 @@
                     inp_texSbj_lbl: 'Text 2',
                     inp_texSbj_pch: 'Subject',
                     inp_imgQly_lbl: 'Quality',
+                    tltp_imgQly: 'This option has a major impact on processing time.',
                     inp_date_lbl: 'Date',
                     txt_prev: 'Preview of the watermark on the first page of your document:',
                     inp_prev: 'Preview',
                     inp_save: 'Save',
                     alrt_xprt: '<p class="p_alert">The export may take a while,</p><p class="p_alert">please be patient.<p>',
+                    inp_texBld_dsc: '(examples)',
                     img_example:'res/img/example_en.jpg',
                 };
                 break;
@@ -226,6 +240,8 @@
         document.querySelector('#inp_texRec').placeholder = arrTexts['inp_texRec_pch'];
         document.querySelector('#inp_texSbj').placeholder = arrTexts['inp_texSbj_pch'];
         document.querySelector('#alrt_xprt').innerHTML = arrTexts['alrt_xprt'];
+        document.querySelector('#inp_texBld_dsc').innerHTML = arrTexts['inp_texBld_dsc'];
+        document.querySelector('#tltp_imgQly').setAttribute('data-bs-title', arrTexts['tltp_imgQly']);
 
         document.getElementById('img_example').src = arrTexts['img_example'];
         
@@ -260,6 +276,9 @@
     }
     
     async function proc(_preview) {
+        document.querySelector('#inp_prev').setAttribute('disabled', 'disabled');
+        document.querySelector('#inp_save').setAttribute('disabled', 'disabled');
+
         if (_preview)
             document.querySelector('#canvas').innerHTML = '';
 
@@ -301,9 +320,9 @@
 
             // Store the maximum number of steps for the progress bar
             if (_preview)
-                window.progressBarMax = 3;
+                window.progressBarMax = 4;
             else
-                window.progressBarMax = (pages.length * 4) + 1;
+                window.progressBarMax = pages.length * 4;
 
             // Get date
             let dateNow = document.querySelector('#inp_date').value;
@@ -438,6 +457,9 @@
                                 await pdfDownload(_preview, pdfBytesSave);
                                 
                                 showAlertExport(false);
+
+                                document.querySelector('#inp_prev').removeAttribute('disabled');
+                                document.querySelector('#inp_save').removeAttribute('disabled');
                             });
                         }
                     });
