@@ -43,7 +43,7 @@
             FiliPDF
         </span>
         <span class="navbar-text mx-3">
-            <span class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">&copy; 2023 - Philippe Jaubert</span>
+            <span class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">&copy; <p id="yearNow" style="display:inline;">2023</p> - Philippe Jaubert</span>
         </span>
     </div>
 </nav>
@@ -64,15 +64,15 @@
             </div>
             
             <div>
-                <input class="form-control" class="lbl_cnt" type="color" id="inp_fntClr" name="inp_fntClr" value="#e66465" />
+                <input class="form-control" class="lbl_cnt" type="color" id="inp_fntClr" name="inp_fntClr" value="#00ff00" />
                 <label class="trans lbl_cnt" for="inp_fntClr" id="inp_fntClr_lbl" data-content=""></label>
             </div>
             
             <div>
                 <select class="form-select" id="inp_texBld">
-                    <option value="Exclusion" selected>Exclusion</option>
                     <option value="Normal">Normal</option>
-                    <option value="Difference">Difference</option>
+                    <option value="Difference" selected>Difference</option>
+                    <option value="Exclusion">Exclusion</option>
                     <option value="Multiply">Multiply</option>
                     <option value="Overlay">Overlay</option>
                     <option value="Screen">Screen</option>
@@ -81,7 +81,7 @@
             </div>
             
             <div>
-                <input class="form-control" class="lbl_cnt" type="range" id="inp_fntSiz" min="10" max="40" step="5" value="20" />
+                <input class="form-control" class="lbl_cnt" type="range" id="inp_fntSiz" min="10" max="40" step="5" value="15" />
                 <label class="trans lbl_cnt" for="inp_fntSiz" id="inp_fntSiz_lbl" data-content=""></label>
             </div>
 
@@ -91,7 +91,7 @@
             </div>
 
             <div>
-                <input class="form-control" class="lbl_cnt" type="range" id="inp_texOpa" min="0" max="1" step="0.1" value="1" />
+                <input class="form-control" class="lbl_cnt" type="range" id="inp_texOpa" min="0" max="1" step="0.1" value="0.3" />
                 <label class="trans lbl_cnt" for="inp_texOpa" id="inp_texOpa_lbl" data-content=""></label>
             </div>
 
@@ -154,11 +154,11 @@
 
     function reset() {
         document.querySelector('#inp_filPck').value = null;
-        document.querySelector('#inp_fntClr').value = '#ff0080';
-        document.querySelector('#inp_texBld').value = 'Exclusion';
-        document.querySelector('#inp_fntSiz').value = 20;
+        document.querySelector('#inp_fntClr').value = '#00ff00';
+        document.querySelector('#inp_texBld').value = 'Difference';
+        document.querySelector('#inp_fntSiz').value = 15;
         document.querySelector('#inp_linSpc').value = 1;
-        document.querySelector('#inp_texOpa').value = 1;
+        document.querySelector('#inp_texOpa').value = .3;
         document.querySelector('#inp_texRec').value = '';
         document.querySelector('#inp_texSbj').value = '';
         document.querySelector('#inp_imgQly').value = 2;
@@ -170,6 +170,8 @@
 
     function init() {
         reset();
+
+        document.querySelector('#yearNow').textContent = (new Date()).getFullYear();
         
         document.querySelectorAll('label.lbl_cnt').forEach((div) => {
             div.setAttribute('data-content', document.querySelector(`#${div.getAttribute('for')}`).value);
