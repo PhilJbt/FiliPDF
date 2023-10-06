@@ -1,35 +1,37 @@
 # FiliPDF - Options
 
-Difference:
+Voici les différents modes de fusions :
 
-<img src="img/difference.jpg" width="250" height="auto"> <img src="img/difference_zoom.jpg" width="250" height="auto">
+Difference :
 
-***
-
-Exclusion:
-
-<img src="img/exclusion.jpg" width="250" height="auto"> <img src="img/exclusion_zoom.jpg" width="250" height="auto">
+<img src="difference.jpg" width="300" height="auto"> <img src="difference_zoom.jpg" width="300" height="auto">
 
 ***
 
-Multiply:
+Exclusion :
 
-<img src="img/multiply.jpg" width="250" height="auto"> <img src="img/multiply_zoom.jpg" width="250" height="auto">
-
-***
-
-Normal:
-
-<img src="img/normal.jpg" width="250" height="auto"> <img src="img/normal_zoom.jpg" width="250" height="auto">
+<img src="exclusion.jpg" width="300" height="auto"> <img src="exclusion_zoom.jpg" width="300" height="auto">
 
 ***
 
-Overlay:
+Multiply :
 
-<img src="img/overlay.jpg" width="250" height="auto"> <img src="img/overlay_zoom.jpg" width="250" height="auto">
+<img src="multiply.jpg" width="300" height="auto"> <img src="multiply_zoom.jpg" width="300" height="auto">
 
 ***
 
-Screen:
+Normal :
 
-<img src="img/screen.jpg" width="250" height="auto"> <img src="img/screen_zoom.jpg" width="250" height="auto">
+<img src="normal.jpg" width="300" height="auto"> <img src="normal_zoom.jpg" width="300" height="auto">
+
+***
+
+Overlay :
+
+<img src="overlay.jpg" width="300" height="auto"> <img src="overlay_zoom.jpg" width="300" height="auto">
+
+***
+
+Screen :
+
+<img src="screen.jpg" width="300" height="auto"> <img src="screen_zoom.jpg" width="300" height="auto">
