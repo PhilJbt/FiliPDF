@@ -183,9 +183,6 @@
                 document.querySelector(`#${div.id}_lbl`).setAttribute('data-content', div.value);
             }); 
         });
-
-        document.querySelector('#inp_prev').setAttribute('disabled', 'disabled');
-        document.querySelector('#inp_save').setAttribute('disabled', 'disabled');
         
         document.querySelector('#inp_filPck').addEventListener("input", (event) => {
             const btn = [document.querySelector('#inp_prev'), document.querySelector('#inp_save')];
@@ -330,8 +327,9 @@
         document.querySelector('#bar_progress').classList.add('bg-danger');
         document.querySelector('#bar_progress').classList.add('progress-bar-animated');
 
-        document.querySelector('#inp_prev').setAttribute('disabled', 'disabled');
-        document.querySelector('#inp_save').setAttribute('disabled', 'disabled');
+        document.querySelectorAll('input, select, button').forEach((button) => {
+            button.setAttribute('disabled', 'disabled');
+        });
 
         if (_preview)
             document.querySelector('#canvas').innerHTML = '';
@@ -374,7 +372,7 @@
 
             // Store the maximum number of steps for the progress bar
             if (_preview)
-                window.progressBarMax = 4;
+                window.progressBarMax = 2;
             else
                 window.progressBarMax = pages.length * 4;
 
@@ -489,43 +487,54 @@
 
                     // 
                     var renderTask = await page.render(renderContext);
-
-                    await renderTask.promise.then(async function() {
+                    
+                    // 
+                    if (!_preview) {
                         // 
-                        window.data[pageNumber - 1] = canvas.toDataURL('image/png');
-
-                        // 
-                        await updateProgressBar();
-
-                        if (++window.pageProcessedCount == pagesMax) {
+                        await renderTask.promise.then(async function() {
                             // 
-                            showAlertExport(true);
+                            window.data[pageNumber - 1] = canvas.toDataURL('image/png');
 
                             // 
-                            window.requestAnimationFrame(async function() {
+                            await updateProgressBar();
+
+                            if (++window.pageProcessedCount == pagesMax) {
                                 // 
-                                const pdfBytesSave = await pngToPdf(_preview);
+                                showAlertExport(true);
 
-                                // Download pdf file
-                                await pdfDownload(_preview, pdfBytesSave);
-                                
-                                showAlertExport(false);
+                                // 
+                                window.requestAnimationFrame(async function() {
+                                    // 
+                                    const pdfBytesSave = await pngToPdf(_preview);
 
-                                document.querySelector('#inp_prev').removeAttribute('disabled');
-                                document.querySelector('#inp_save').removeAttribute('disabled');
-
-                                document.querySelector('#bar_progress').classList.remove('progress-bar-animated');
-                                document.querySelector('#bar_progress').classList.remove('bg-danger');
-                                document.querySelector('#bar_progress').classList.add('bg-success');
-                                document.querySelector('#bar_progress').textContent = translate('bar_progress_finish');
-                            });
-                        }
-                    });
+                                    // Download pdf file
+                                    await pdfDownload(_preview, pdfBytesSave);
+                                    
+                                    buttonsDefaultState();
+                                });
+                            }
+                        });
+                    }
+                    else
+                        buttonsDefaultState();
                 });
             }
         }, function(reason) {
             console.error(`An error occured: ${reason}`);
         });
+    }
+
+    function buttonsDefaultState() {
+        showAlertExport(false);
+
+        document.querySelectorAll('input, select, button').forEach((button) => {
+            button.removeAttribute('disabled', 'disabled');
+        });
+
+        document.querySelector('#bar_progress').classList.remove('progress-bar-animated');
+        document.querySelector('#bar_progress').classList.remove('bg-danger');
+        document.querySelector('#bar_progress').classList.add('bg-success');
+        document.querySelector('#bar_progress').textContent = translate('bar_progress_finish');
     }
 
     function showAlertExport(_show) {
