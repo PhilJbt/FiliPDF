@@ -36,8 +36,8 @@
 ***
 
 ### Incrustation  
-### Overlay  
 &#127467;&#127479; Combine les couleurs de base et de fusion pour augmenter le contraste et la saturation.  
+### Overlay  
 &#127482;&#127480; Combines the base and blend colors to increase contrast and saturation.
 
 <img src="img/overlay.jpg" width="300" height="auto"><img src="img/overlay_zoom.jpg" width="300" height="auto">
