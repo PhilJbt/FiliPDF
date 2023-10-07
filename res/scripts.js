@@ -149,7 +149,7 @@ function translate(_name) {
                 inp_texRec_lbl: 'Texte 1',
                 inp_texRec_pch: 'Destinataire',
                 inp_texSbj_lbl: 'Texte 2',
-                inp_texSbj_pch: 'Sujet',
+                inp_texSbj_pch: 'Objet',
                 inp_imgQly_lbl: 'Qualité de l\'image',
                 tltp_imgQly: 'Cette option impacte grandement la durée de traitement.',
                 inp_date_lbl: 'Date',
