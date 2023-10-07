@@ -3,38 +3,12 @@
 <head>
     <title>FiliPDF</title>
     <link rel="icon" type="image/png" href="res/img/favicon.png" />
+    <link href="res/styles.css" rel="stylesheet">
     <script type="text/javascript" src="res/dep/pdf-lib/pdf-lib.min.js"></script>
     <script type="text/javascript" src="res/dep/pdfjs/pdf.js"></script>
     <link href="res/dep/bootstrap/bootstrap.min.css" rel="stylesheet">
     <script src="res/dep/bootstrap/bootstrap.bundle.min.js"></script>
-    <style>
-        body {
-            user-select: none;
-        }
-        label.lbl_cnt:after {
-            content: " : " attr(data-content);
-        }
-        #canvas {
-            background-color: #ddd;
-            min-width: '618px';
-            min-height: '800px';
-            padding: 20px;
-        }
-        #alrt_xprt {
-            display: none;
-        }
-        .p_alert {
-            padding: 0;
-            margin: 0;
-        }
-        .txt_dsc {
-            display:inline;
-            font-size:14px;
-        }
-        .tooltip {
-            pointer-events: none;
-        }
-    </style>
+    <script src="res/scripts.js"></script>
 </head>
 <body>
 <nav class="navbar bg-body-tertiary border-bottom border-body">
@@ -56,86 +30,112 @@
     </div>
 
     <div class="d-flex flex-row">
+        
+        <div class="p-0 m-0">
+            <div class="d-flex flex-column gap-3 ms-5 bar_sticky mnu_bar">
 
-        <div class="d-flex flex-column d-inline-flex gap-3 ms-5">
+                <div class="">
+                    <input class="form-control" type="file" id="inp_filPck" name="inp_filPck" accept=".pdf"/>
+                    <label class="trans" for="inp_filPck" id="inp_filPck_lbl"></label>
+                </div>
+                
 
-            <div class="mb-5">
-                <input class="form-control" type="file" id="inp_filPck" name="inp_filPck" accept=".pdf"/>
-                <label class="trans" for="inp_filPck" id="inp_filPck_lbl"></label>
-            </div>
-            
-            <div>
-                <input class="form-control" class="lbl_cnt" type="color" id="inp_fntClr" name="inp_fntClr" value="#00ff00" />
-                <label class="trans lbl_cnt" for="inp_fntClr" id="inp_fntClr_lbl" data-content=""></label>
-            </div>
-            
-            <div>
-                <select class="form-select" id="inp_texBld">
-                    <option value="Normal">Normal</option>
-                    <option value="Difference" selected>Difference</option>
-                    <option value="Exclusion">Exclusion</option>
-                    <option value="Multiply">Multiply</option>
-                    <option value="Overlay">Overlay</option>
-                    <option value="Screen">Screen</option>
-                </select>
-                <label class="trans" for="inp_texBld" id="inp_texBld_lbl"></label> <p class="txt_dsc"><a id="inp_texBld_dsc" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-light" target="_blank" href="https://github.com/PhilJbt/FiliPDF/blob/main/docs/options/options.md"></a></p>
-            </div>
-            
-            <div>
-                <input class="form-control" class="lbl_cnt" type="range" id="inp_fntSiz" min="10" max="40" step="5" value="15" />
-                <label class="trans lbl_cnt" for="inp_fntSiz" id="inp_fntSiz_lbl" data-content=""></label>
-            </div>
-
-            <div>
-                <input class="form-control" class="lbl_cnt" type="range" id="inp_linSpc" min="0.5" max="3" step="0.1" value="1" />
-                <label class="trans lbl_cnt" for="inp_linSpc" id="inp_linSpc_lbl" data-content=""></label>
-            </div>
-
-            <div>
-                <input class="form-control" class="lbl_cnt" type="range" id="inp_texOpa" min="0" max="1" step="0.1" value="0.3" />
-                <label class="trans lbl_cnt" for="inp_texOpa" id="inp_texOpa_lbl" data-content=""></label>
-            </div>
-
-            <div>
-                <input class="form-control" type="text" id="inp_texRec" />
-                <label class="trans" for="inp_texRec" id="inp_texRec_lbl" data-content=""></label>
-            </div>
-
-            <div>
-                <input class="form-control" type="text" id="inp_texSbj" />
-                <label class="trans" for="inp_texSbj" id="inp_texSbj_lbl" data-content=""></label>
-            </div>
-
-            <div id="tltp_imgQly" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="">
-                <input class="form-control" class="lbl_cnt" type="range" id="inp_imgQly" min="1" max="5" step="1" value="2" />
-                <label class="trans lbl_cnt" for="inp_imgQly" id="inp_imgQly_lbl" data-content=""></label>
-            </div>
-
-            <div>
-                <input class="form-control" class="lbl_cnt" type="date" id="inp_date" />
-                <label class="trans" for="inp_date" id="inp_date_lbl" data-content=""></label>
-            </div>
-
-            <div class="btn-group flex-row justify-content-center mt-5" role="group">
-                <button type="button" onclick="proc(true)" id="inp_prev" class="btn btn-primary trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=""disabled></button>
-                <button type="button" onclick="proc(false)" id="inp_save" class="btn btn-success trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=""disabled></button>
-                <button type="button" onclick="reset()" id="inp_rset" class="btn btn-secondary trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=""></button>
-            </div>
-
-            <div class="d-flex flex-column">
-                <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 20px">
-                    <div class="progress-bar progress-bar-striped" id="bar_progress" style="width: 0%">0%</div>
+                <div>
+                    <input class="form-control mt-5" type="text" id="inp_texRec" />
+                    <label class="trans" for="inp_texRec" id="inp_texRec_lbl" data-content=""></label>
                 </div>
 
-                <div class="alert alert-danger mt-3" id="alrt_xprt" role="alert"></div>   
-            </div>               
+                <div>
+                    <input class="form-control" type="text" id="inp_texSbj" />
+                    <label class="trans" for="inp_texSbj" id="inp_texSbj_lbl" data-content=""></label>
+                </div>
 
+                <div>
+                    <input class="form-control" class="lbl_cnt" type="range" id="inp_fntSiz" min="10" max="40" step="5" value="15" />
+                    <label class="trans lbl_cnt" for="inp_fntSiz" id="inp_fntSiz_lbl" data-content=""></label>
+                </div>
+
+                <div>
+                    <input class="form-control" class="lbl_cnt" type="range" id="inp_linSpc" min="0.5" max="3" step="0.1" value="1" />
+                    <label class="trans lbl_cnt" for="inp_linSpc" id="inp_linSpc_lbl" data-content=""></label>
+                </div>
+
+                <div id="tltp_imgQly" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="">
+                    <input class="form-control" class="lbl_cnt" type="range" id="inp_imgQly" min="1" max="5" step="1" value="2" />
+                    <label class="trans lbl_cnt" for="inp_imgQly" id="inp_imgQly_lbl" data-content=""></label>
+                </div>
+
+                <div>
+                    <input class="form-control" class="lbl_cnt" type="date" id="inp_date" />
+                    <label class="trans" for="inp_date" id="inp_date_lbl" data-content=""></label>
+                </div>
+
+
+                <div class="btn-group flex-row justify-content-center mt-5" role="group">
+                    <button type="button" onclick="proc(true)" id="inp_prev" class="btn btn-primary trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="" disabled></button>
+                    <button type="button" onclick="proc(false)" id="inp_save" class="btn btn-success trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="" disabled></button>
+                </div>
+
+
+                <div class="d-flex flex-column">
+                    <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 20px">
+                        <div class="progress-bar progress-bar-striped" id="bar_progress" style="width: 0%">0%</div>
+                    </div>
+
+                    <div class="alert alert-danger" id="alrt_xprt" role="alert"></div>   
+                </div>     
+                
+
+                
+                <div class="btn-group flex-row justify-content-center mt-5 mb-2">
+                    <div class="input-group">
+                        <div class="input-group-text trans" id="btn_presets"></div>
+                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(1)" id="prset1_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">1</button>
+                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(2)" id="prset2_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">2</button>
+                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(3)" id="prset3_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">3</button>
+                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(4)" id="prset4_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">4</button>
+                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(5)" id="prset5_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">5</button>
+                    </div>
+                </div>
+
+                <div>
+                    <input class="form-control" class="lbl_cnt" type="color" id="inp_fntClr" name="inp_fntClr" value="#00ff00" />
+                    <label class="trans lbl_cnt" for="inp_fntClr" id="inp_fntClr_lbl" data-content=""></label>
+                </div>
+                
+                <div>
+                    <select class="form-select" id="inp_texBld">
+                        <option id="slc_nrml" class="trans" value="0"></option>
+                        <option id="slc_diff" class="trans" value="1" selected></option>
+                        <option id="slc_xclu" class="trans" value="2"></option>
+                        <option id="slc_mlti" class="trans" value="3"></option>
+                        <option id="slc_ovrl" class="trans" value="4"></option>
+                        <option id="slc_scrn" class="trans" value="5"></option>
+                        <option id="slc_clrb" class="trans" value="6"></option>
+                        <option id="slc_clrd" class="trans" value="7"></option>
+                        <option id="slc_drkn" class="trans" value="8"></option>
+                        <option id="slc_ligh" class="trans" value="9"></option>
+                        <option id="slc_ligt" class="trans" value="10"></option>
+                        <option id="slc_ligs" class="trans" value="11"></option>
+                    </select>
+                    <label class="trans" for="inp_texBld" id="inp_texBld_lbl"></label> <p class="txt_dsc"><a id="inp_texBld_dsc" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-light" target="_blank" href="https://github.com/PhilJbt/FiliPDF/blob/main/docs/options/options.md"></a></p>
+                </div>
+                
+                <div>
+                    <input class="form-control" class="lbl_cnt" type="range" id="inp_texOpa" min="0" max="1" step="0.1" value="0.3" />
+                    <label class="trans lbl_cnt mb-5" for="inp_texOpa" id="inp_texOpa_lbl" data-content=""></label>
+                </div>
+
+            </div>
+        
         </div>
 
-        <div class="d-flex flex-column mx-3 ms-5">
-            <p class="lead mb-3 trans" id="txt_prev"></p>
-            <div id="canvas">
-                <img id="img_example" src="" />
+        <div class="flex-shrink-1 p-0 m-0">
+            <div class="d-flex flex-column mx-3 ms-5 bar_sticky">
+                <p class="lead mb-3 trans" id="txt_prev"></p>
+                <div id="canvas">
+                    <img id="img_example" src="" />
+                </div>
             </div>
         </div>
 
@@ -143,454 +143,4 @@
 
 </div>
 </body>
-</html> 
-<script>
-    document.addEventListener('readystatechange', e => {
-        if (e.target.readyState === "complete") {
-            init();
-            translate_init();
-            initComp();
-        }
-    }, false);
-
-    function reset() {
-        document.querySelector('#inp_filPck').value = null;
-        document.querySelector('#inp_fntClr').value = '#00ff00';
-        document.querySelector('#inp_texBld').value = 'Difference';
-        document.querySelector('#inp_fntSiz').value = 15;
-        document.querySelector('#inp_linSpc').value = 1;
-        document.querySelector('#inp_texOpa').value = .3;
-        document.querySelector('#inp_texRec').value = '';
-        document.querySelector('#inp_texSbj').value = '';
-        document.querySelector('#inp_imgQly').value = 2;
-        document.querySelector('#inp_date').value = new Date().toISOString().substring(0, 10);
-
-        document.querySelector('#inp_prev').setAttribute('disabled', 'disabled');
-        document.querySelector('#inp_save').setAttribute('disabled', 'disabled');
-    }
-
-    function init() {
-        reset();
-
-        document.querySelector('#yearNow').textContent = (new Date()).getFullYear();
-        
-        document.querySelectorAll('label.lbl_cnt').forEach((div) => {
-            div.setAttribute('data-content', document.querySelector(`#${div.getAttribute('for')}`).value);
-        });
-
-        document.querySelectorAll('input').forEach((div) => {
-            div.addEventListener("input", (event) => {
-                document.querySelector(`#${div.id}_lbl`).setAttribute('data-content', div.value);
-            }); 
-        });
-        
-        document.querySelector('#inp_filPck').addEventListener("input", (event) => {
-            const btn = [document.querySelector('#inp_prev'), document.querySelector('#inp_save')];
-
-            if (document.querySelector('#inp_filPck').files.length === 0) {
-                btn[0].setAttribute('disabled', 'disabled');
-                btn[1].setAttribute('disabled', 'disabled');
-            }
-            else {
-                btn[0].removeAttribute('disabled');
-                btn[1].removeAttribute('disabled');
-            }
-        });
-    }
-
-    function initComp() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl, {
-                trigger : 'hover'
-            });
-        })
-    }
-
-    function translate_init() {
-        document.querySelector('#inp_texRec').placeholder = translate('inp_texRec_pch');
-        document.querySelector('#inp_texSbj').placeholder = translate('inp_texSbj_pch');
-        document.querySelector('#alrt_xprt').innerHTML = translate('alrt_xprt');
-        document.querySelector('#inp_texBld_dsc').innerHTML = translate('inp_texBld_dsc');
-
-        document.querySelector('#tltp_imgQly').setAttribute('data-bs-title', translate('tltp_imgQly'));
-        document.querySelector('#inp_prev').setAttribute('data-bs-title', translate('inp_prev_pvr'));
-        document.querySelector('#inp_save').setAttribute('data-bs-title', translate('inp_save_pvr'));
-        document.querySelector('#inp_rset').setAttribute('data-bs-title', translate('inp_rset_pvr'));
-
-        document.getElementById('img_example').src = translate('img_example');
-        
-        document.querySelectorAll('.trans').forEach((div) => {
-            div.textContent = translate(div.id);
-        });
-    }
-
-    function translate(_name) {
-        let arrTexts = {};
-        const lang = navigator.language || navigator.userLanguage;
-        switch(lang) {
-            case 'fr':
-                arrTexts = {
-                    bdy_ttl: 'Appliquer un filigrane sur un PDF',
-                    bdy_dsc: 'L\'ensemble du processus est traité sur votre ordinateur personnel, aucune de vos données ne transite ailleurs.',
-                    bdy_add: 'Pour cette raison, l\'application du filigrane peut être lent en fonction de votre materiel informatique, la taille et le nombre de pages de votre document, ainsi que la qualité d\'image sélectionné.',
-                    inp_filPck_lbl: 'Le PDF auquel appliquer le filigrane',
-                    inp_fntClr_lbl: 'Couleur de la police',
-                    inp_texBld_lbl: 'Mode de fusion',
-                    inp_fntSiz_lbl: 'Taille de la police',
-                    inp_linSpc_lbl: 'Facteur d\'espacement des lignes',
-                    inp_texOpa_lbl: 'Opacité du texte',
-                    inp_texRec_lbl: 'Texte 1',
-                    inp_texRec_pch: 'Destinataire',
-                    inp_texSbj_lbl: 'Texte 2',
-                    inp_texSbj_pch: 'Sujet',
-                    inp_imgQly_lbl: 'Qualité de l\'image',
-                    tltp_imgQly: 'Cette option impacte grandement la durée de traitement.',
-                    inp_date_lbl: 'Date',
-                    txt_prev: 'Prévisualisation :',
-                    inp_prev: 'Prévisualiser',
-                    inp_prev_pvr: 'Prévisualise la première page du PDF avec filigrane.',
-                    inp_save: 'Sauvegarder',
-                    inp_save_pvr: 'Enregistre le PDF avec filigrane.',
-                    inp_rset: 'Réinitialiser',
-                    inp_rset_pvr: 'Réinitialise les options par défaut.',
-                    bar_progress_finish: 'Terminé !',
-                    alrt_xprt: '<p class="p_alert">Veuillez patientez, même si la page se fige.</p>',
-                    inp_texBld_dsc: '(exemples)',
-                    img_example:'res/img/example_fr.jpg',
-                };
-                break;
-
-            default:
-                arrTexts = {
-                    bdy_ttl: 'Apply Watermark on a PDF',
-                    bdy_dsc: 'The entire process is handled on your personal computer, none of your data is sent anywhere else.',
-                    bdy_add: 'For this reason, watermarking can be slow depending on your computer hardware, the size and number of pages of your document, and the image quality selected.',
-                    inp_filPck_lbl: 'The PDF to watermark',
-                    inp_fntClr_lbl: 'Font color',
-                    inp_texBld_lbl: 'Blend mode',
-                    inp_fntSiz_lbl: 'Font size',
-                    inp_linSpc_lbl: 'Line spacing factor',
-                    inp_texOpa_lbl: 'Text opacity',
-                    inp_texRec_lbl: 'Text 1',
-                    inp_texRec_pch: 'Recipient',
-                    inp_texSbj_lbl: 'Text 2',
-                    inp_texSbj_pch: 'Subject',
-                    inp_imgQly_lbl: 'Quality',
-                    tltp_imgQly: 'This option has a major impact on processing duration.',
-                    inp_date_lbl: 'Date',
-                    txt_prev: 'Preview:',
-                    inp_prev: 'Preview',
-                    inp_prev_pvr: 'Preview the first page of the watermarked PDF.',
-                    inp_save: 'Save',
-                    inp_save_pvr: 'Saves PDF with watermark.',
-                    inp_rset: 'Reset',
-                    inp_rset_pvr: 'Reset options to default.',
-                    bar_progress_finish: 'Finished!',
-                    alrt_xprt: '<p class="p_alert">Please wait, even if the page freezes.<p>',
-                    inp_texBld_dsc: '(examples)',
-                    img_example:'res/img/example_en.jpg',
-                };
-                break;
-        }
-
-        return arrTexts[_name];
-    }
-
-    async function updateProgressBar() {
-        let valueProgress = ((++window.progressBarCur / window.progressBarMax) * 100).toFixed(0);
-        let prcntProgress = `${valueProgress}%`;
-        
-        document.querySelector('#bar_progress').style.width = prcntProgress;
-        document.querySelector('#bar_progress').textContent = prcntProgress;
-    }
-
-    // Modified, original from 1047797/david, https://stackoverflow.com/a/11508164
-    function hexToRgb(hex) {
-        let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-        hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-            return r + r + g + g + b + b;
-        });
-
-        let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        let arrRes = {
-            r: parseFloat(parseInt(result[1], 16)) / 255,
-            g: parseFloat(parseInt(result[2], 16)) / 255,
-            b: parseFloat(parseInt(result[3], 16)) / 255,
-        };
-        
-        return arrRes;
-    }
-    
-    async function proc(_preview) {
-        document.querySelector('#bar_progress').classList.remove('bg-success');
-        document.querySelector('#bar_progress').classList.add('bg-danger');
-        document.querySelector('#bar_progress').classList.add('progress-bar-animated');
-
-        document.querySelectorAll('input, select, button').forEach((button) => {
-            button.setAttribute('disabled', 'disabled');
-        });
-
-        if (_preview)
-            document.querySelector('#canvas').innerHTML = '';
-
-        document.querySelector('#bar_progress').style.width = '0%';
-        document.querySelector('#bar_progress').textContent = '0%';
-
-        window.progressBarCur = 0;
-
-        window.pageProcessedCount = 0;
-        
-        let userFile = document.querySelector('#inp_filPck').files[0];
-        window.userFile = userFile;
-
-        var reader = await new FileReader();
-        
-        reader.onload = async (readerEvent) => {
-            // Watermark the PDF, convert PDF pages to PNGs, embed PNGs to a new PDF, download the PDF
-            await pdfProcess(_preview, readerEvent);
-        };
-
-        await reader.readAsArrayBuffer(userFile);
-    }
-
-    async function pdfProcess(_preview, _readerEvent) {
-        // Import PDF-Lib
-            const PDFLib = window['PDFLib'];
-
-            // Retrieve pdf content
-            const content = await _readerEvent.target.result;
-
-            // Create the new pdf
-            const pdfDoc = await PDFLib.PDFDocument.load(content);
-            
-            // Retrieve font
-            const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
-
-            // Get the pages to watermark
-            const pages = await pdfDoc.getPages();
-
-            // Store the maximum number of steps for the progress bar
-            if (_preview)
-                window.progressBarMax = 2;
-            else
-                window.progressBarMax = pages.length * 4;
-
-            // Get date
-            let dateNow = document.querySelector('#inp_date').value;
-
-            // Format the user text
-            let to = document.querySelector('#inp_texRec').value || '****************',
-                about = document.querySelector('#inp_texSbj').value || '****************';
-            let textUserFormat = [
-                `- ${to} - ${about} - ${dateNow} `.split('').join(' ').repeat(4).toUpperCase(),
-                `- ${dateNow} - ${to} - ${about} `.split('').join(' ').repeat(4).toUpperCase(),
-                `- ${about} - ${dateNow} - ${to} `.split('').join(' ').repeat(4).toUpperCase(),
-            ];
-
-            // Declare text specifications
-            const textSize = parseInt(document.querySelector('#inp_fntSiz').value);
-            const textWidth = helveticaFont.widthOfTextAtSize(textUserFormat[0], textSize);
-            const textHeight = helveticaFont.heightAtSize(textSize);
-            
-            // Write text on all pages
-            const pagesCount = _preview ? 1 : pages.length;
-            for (let i = 0; i < pagesCount; ++i) {
-                // 
-                await updateProgressBar();
-
-                // Get first page
-                const currentPage = await pages[i];
-
-                // Retrieve page size
-                const { width, height } = currentPage.getSize();
-
-                // Convert color
-                const arrColor = hexToRgb(document.querySelector('#inp_fntClr').value);
-
-                // Set watermark options
-                let heightCurr = -height;
-                let idLine = 0;
-                while (heightCurr < height) {
-                    currentPage.drawText(textUserFormat[(++idLine) % 3], {
-                        x: 0,
-                        y: heightCurr,
-                        size: textSize,
-                        font: helveticaFont,
-                        color: PDFLib.rgb(arrColor.r, arrColor.g, arrColor.b),
-                        blendMode: document.querySelector('#inp_texBld').value,
-                        opacity: parseFloat(document.querySelector('#inp_texOpa').value),
-                        rotate: PDFLib.degrees(45),
-                    });
-                    heightCurr += (textSize * 5) * parseFloat(document.querySelector('#inp_linSpc').value);
-                }
-            }
-
-            // Convert pdf object to bytes array
-            const pdfBytes = await pdfDoc.save();
-
-            // Convert watermarked pdf pages to png
-            await pdfToPng(_preview, pdfBytes);
-    }
-
-    async function pdfToPng(_preview, _pdfBytes) {
-        // 
-        window.data = [];
-        window.totalPages = 0;
-        var PDFJS = window['pdfjs-dist/build/pdf'];
-
-        PDFJS.GlobalWorkerOptions.workerSrc = 'res/dep/pdfjs/pdf.worker.js';
-
-        var loadingTask = await PDFJS.getDocument(_pdfBytes);
-
-        await loadingTask.promise.then(async function(pdf) {
-            var canvasdiv = document.getElementById('canvas');
-            window.totalPages = pdf.numPages
-
-            const pagesMax = _preview ? 1 : window.totalPages;
-            for (let pageNumber = 1; pageNumber <= pagesMax; ++pageNumber) {
-                // 
-                await updateProgressBar();
-
-                // 
-                await pdf.getPage(pageNumber).then(async function(page) {
-                    var scale = parseFloat(document.querySelector('#inp_imgQly').value);
-                    var viewport = page.getViewport({ scale: scale });
-
-                    var canvas = document.createElement('canvas');
-
-                    if (_preview)
-                        canvasdiv.appendChild(canvas);
-
-                    // Prepare canvas using PDF page dimensions
-                    var context = canvas.getContext('2d');
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
-
-                    if (window.devicePixelRatio > 1) {
-                        canvas.width *= window.devicePixelRatio;
-                        canvas.height *= window.devicePixelRatio;
-
-                        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-                    }
-
-                    // canvas.style.width = canvas.width + "px";
-                    // canvas.style.height = canvas.height + "px";
-                    // canvas.style.height = "90vh";
-                    // canvas.style.width = "auto";
-
-                    window.pageWidth = viewport.width;
-                    window.pageHeight = viewport.height;
-
-                    // Render PDF page into canvas context
-                    var renderContext = { canvasContext: context, viewport: viewport };
-
-                    // 
-                    var renderTask = await page.render(renderContext);
-                    
-                    // 
-                    if (!_preview) {
-                        // 
-                        await renderTask.promise.then(async function() {
-                            // 
-                            window.data[pageNumber - 1] = canvas.toDataURL('image/png');
-
-                            // 
-                            await updateProgressBar();
-
-                            if (++window.pageProcessedCount == pagesMax) {
-                                // 
-                                showAlertExport(true);
-
-                                // 
-                                window.requestAnimationFrame(async function() {
-                                    // 
-                                    const pdfBytesSave = await pngToPdf(_preview);
-
-                                    // Download pdf file
-                                    await pdfDownload(_preview, pdfBytesSave);
-                                    
-                                    buttonsDefaultState();
-                                });
-                            }
-                        });
-                    }
-                    else
-                        buttonsDefaultState();
-                });
-            }
-        }, function(reason) {
-            console.error(`An error occured: ${reason}`);
-        });
-    }
-
-    function buttonsDefaultState() {
-        showAlertExport(false);
-
-        document.querySelectorAll('input, select, button').forEach((button) => {
-            button.removeAttribute('disabled', 'disabled');
-        });
-
-        document.querySelector('#bar_progress').classList.remove('progress-bar-animated');
-        document.querySelector('#bar_progress').classList.remove('bg-danger');
-        document.querySelector('#bar_progress').classList.add('bg-success');
-        document.querySelector('#bar_progress').textContent = translate('bar_progress_finish');
-    }
-
-    function showAlertExport(_show) {
-        if (_show)
-            document.querySelector('#alrt_xprt').style.display = 'block';
-        else
-            document.querySelector('#alrt_xprt').style.display = 'none';
-    }
-
-    async function pngToPdf(_preview) {
-        let DateNowSave = new Date();
-        const pdfDocSave = await PDFLib.PDFDocument.create();
-        pdfDocSave.setTitle('');
-        pdfDocSave.setAuthor('');
-        pdfDocSave.setSubject('');
-        pdfDocSave.setKeywords(['']);
-        pdfDocSave.setProducer('');
-        pdfDocSave.setCreator('');
-        pdfDocSave.setCreationDate(DateNowSave);
-        pdfDocSave.setModificationDate(DateNowSave);
-        
-        let idImage = 0;
-        const pagesCount = _preview ? 1 : window.totalPages;
-        for (let i = 0; i < pagesCount; ++i) {
-            // 
-            await updateProgressBar();
-
-            // 
-            const newPage = await pdfDocSave.addPage([window.pageWidth, window.pageHeight]);
-            
-            const img = await pdfDocSave.embedPng(window.data[idImage]);
-            
-            newPage.drawImage(img, {
-                x: 0,
-                y: 0,
-                width: window.pageWidth,
-                height: window.pageHeight,
-                blendMode: 'Normal',
-            });
-
-            ++idImage;
-        }
-
-        return await pdfDocSave.save()
-    }
-
-    async function pdfDownload(_preview, _pdfBytes) {
-        if (_preview === false) {
-            let filename = window.userFile.name;
-            filename = `${filename.substring(0, filename.lastIndexOf('.'))}__watermark.pdf`;
-
-            var blob = new Blob([_pdfBytes], {type: "application/pdf"});
-            var link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = filename;
-            link.click();
-        }
-    }
-</script>
+</html>

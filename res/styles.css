@@ -1,0 +1,44 @@
+body {
+    user-select: none;
+}
+
+label.lbl_cnt:after {
+    content: " : " attr(data-content);
+}
+
+#canvas {
+    background-color: #ddd;
+    min-width: '618px';
+    min-height: '800px';
+    padding: 20px;
+}
+
+#alrt_xprt {
+    display: none;
+    position: absolute;
+    width: 100%;
+}
+
+.p_alert {
+    padding: 0;
+    margin: 0;
+}
+
+.txt_dsc {
+    display: inline;
+    font-size: 14px;
+}
+
+.tooltip {
+    pointer-events: none;
+}
+
+.bar_sticky {
+    position: sticky;
+    background-attachment: scroll;
+    top: 0;
+}
+
+.mnu_bar {
+    min-width: 333px;
+}
