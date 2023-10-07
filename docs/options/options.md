@@ -9,6 +9,7 @@
 
 ***
 
+### Différence  
 ### Difference  
 &#127467;&#127479; Soustrait la couleur de fusion de la couleur de base ou vice versa, ce qui produit un effet de contraste élevé.  
 &#127482;&#127480; Subtracts the blend color from the base color or vice versa, resulting in a high-contrast effect.
@@ -25,6 +26,7 @@
 
 ***
 
+### Produit  
 ### Multiply  
 &#127467;&#127479; Assombrit la couleur de base en la multipliant avec la couleur de mélange.  
 &#127482;&#127480; Darkens the base color by multiplying it with the blend color.
@@ -33,6 +35,7 @@
 
 ***
 
+### Incrustation  
 ### Overlay  
 &#127467;&#127479; Combine les couleurs de base et de fusion pour augmenter le contraste et la saturation.  
 &#127482;&#127480; Combines the base and blend colors to increase contrast and saturation.
@@ -41,6 +44,7 @@
 
 ***
 
+### Superposition  
 ### Screen  
 &#127467;&#127479; Éclaircit la couleur de base en l'inversant et en la multipliant avec la couleur de fusion inversée.  
 &#127482;&#127480; Lightens the base color by inverting and multiplying it with the inverted blend color.
@@ -49,6 +53,7 @@
 
 ***
 
+### Densité couleur +  
 ### Color Burn  
 &#127467;&#127479; Assombrit la couleur de base en augmentant le contraste avec la couleur de fusion.  
 &#127482;&#127480; Darkens the base color by increasing the contrast with the blend color.
@@ -57,6 +62,7 @@
 
 ***
 
+### Densité couleur -  
 ### Color Dodge  
 &#127467;&#127479; Éclaircit la couleur de base en diminuant le contraste avec la couleur de fusion.  
 &#127482;&#127480; Lightens the base color by decreasing the contrast with the blend color.
@@ -65,6 +71,7 @@
 
 ***
 
+### Obscurcir  
 ### Darken  
 &#127467;&#127479; Sélectionne la couleur la plus foncée entre la couleur de base et la couleur de fusion.  
 &#127482;&#127480; Selects the darker color between the base and blend colors.
@@ -73,6 +80,7 @@
 
 ***
 
+### Lumière crue  
 ### Hard Light  
 &#127467;&#127479; Combine les couleurs de base et de fusion en mettant l'accent sur les tons clairs et les ombres de la couleur de fusion.  
 &#127482;&#127480; Combines the base and blend colors with a strong emphasis on the blend color's highlights and shadows.
@@ -81,6 +89,7 @@
 
 ***
 
+### Eclaircir  
 ### Lighten  
 &#127467;&#127479; Sélectionne la couleur la plus claire entre la couleur de base et la couleur de mélange.  
 &#127482;&#127480; Selects the lighter color between the base and blend colors.
@@ -89,6 +98,7 @@
 
 ***
 
+### Lumière tamisée  
 ### Soft Light  
 &#127467;&#127479; Mélange doucement les couleurs de base et de fusion, en préservant les tons moyens et en renforçant le contraste.  
 &#127482;&#127480; Softly blends the base and blend colors, preserving midtones and enhancing contrast.
