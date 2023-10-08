@@ -121,7 +121,7 @@ function translate_init() {
 
 function translate(_name) {
     let arrTexts = {};
-    const lang = navigator.language || navigator.userLanguage;
+    const lang = (navigator.language || navigator.userLanguage).substring(0, 2);
     switch(lang) {
         case 'fr':
             arrTexts = {
