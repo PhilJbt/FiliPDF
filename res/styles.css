@@ -8,8 +8,8 @@ label.lbl_cnt:after {
 
 #canvas {
     background-color: #ddd;
-    min-width: '618px';
-    min-height: '800px';
+    min-width: 618px;
+    min-height: 800px;
     padding: 20px;
 }
 
