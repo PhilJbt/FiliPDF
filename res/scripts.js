@@ -72,8 +72,6 @@ function reset() {
 
 function init() {
     reset();
-
-    document.querySelector('#yearNow').textContent = (new Date()).getFullYear();
     
     document.querySelector('#inp_filPck').addEventListener("input", (event) => {
         const btn = [document.querySelector('#inp_prev'), document.querySelector('#inp_save')];

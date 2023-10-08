@@ -6,4 +6,4 @@
 - FiliPDF fonctionne en toute autonomie sur l'ordinateur local, sans nécessiter de connexion à un serveur. Par conséquent, aucune donnée n'est transférée vers l'extérieur ;
 - Diverses options sont proposées, notamment la possibilité de régler l'opacité du texte, afin de [réduire au maximum l'efficacité](options/opacity.md) des intelligences artificielles chargées de supprimer les filigranes.
 
-![](screenshot.png)
+![](screenshot.jpg)

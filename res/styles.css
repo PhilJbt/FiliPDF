@@ -44,3 +44,12 @@ label.lbl_cnt:after {
 .mnu_bar {
     min-width: 333px;
 }
+
+.lnk_github {
+    opacity: .5;
+    transition: opacity .125s;
+    font-size: 25px;
+}
+.lnk_github:hover {
+    opacity: 1;
+}
