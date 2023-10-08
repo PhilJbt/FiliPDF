@@ -23,7 +23,7 @@ function setPreset(_id) {
         default:
             document.querySelector('#inp_fntClr').value = '#7f00ff';
             document.querySelector('#inp_texBld').value = 6;
-            document.querySelector('#inp_texOpa').value = .6;
+            document.querySelector('#inp_texOpa').value = .3;
             break;
 
         case 2:
@@ -102,7 +102,9 @@ function translate_init() {
     document.querySelector('#inp_texRec').placeholder = translate('inp_texRec_pch');
     document.querySelector('#inp_texSbj').placeholder = translate('inp_texSbj_pch');
     document.querySelector('#alrt_xprt').innerHTML = translate('alrt_xprt');
-    document.querySelector('#inp_texBld_dsc').innerHTML = translate('inp_texBld_dsc');
+    document.querySelectorAll('#inp_texBld_dsc').forEach((div) => {
+        div.innerHTML = translate('inp_texBld_dsc');
+    });
 
     document.querySelector('#tltp_imgQly').setAttribute('data-bs-title', translate('tltp_imgQly'));
     document.querySelector('#inp_prev').setAttribute('data-bs-title', translate('inp_prev_pvr'));
@@ -307,7 +309,7 @@ async function pdfProcess(_preview, _readerEvent) {
             window.progressBarMax = pages.length * 4;
 
         // Get date
-        let dateNow = document.querySelector('#inp_date').value;
+        let dateNow = (new Date(document.querySelector('#inp_date').value)).toLocaleDateString();
 
         // Format the user text
         let to = document.querySelector('#inp_texRec').value || '****************',

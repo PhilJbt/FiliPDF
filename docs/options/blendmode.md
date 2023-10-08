@@ -1,4 +1,4 @@
-# FiliPDF - Options
+# FiliPDF - Modes de fusion / Blend modes
 
 
 ### Normal  
