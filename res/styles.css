@@ -13,7 +13,7 @@ label.lbl_cnt:after {
     padding: 20px;
 }
 
-#alrt_xprt {
+#alrt_xprt, #err_xprt {
     display: none;
     position: absolute;
     width: 100%;
@@ -42,7 +42,7 @@ label.lbl_cnt:after {
 }
 
 .mnu_bar {
-    min-width: 333px;
+    min-width: 350px;
 }
 
 .lnk_github {
@@ -56,4 +56,16 @@ label.lbl_cnt:after {
 
 #img_example {
     opacity: .2;
+}
+
+#inp_prev:before, #inp_save:before {
+    font-family: 'bootstrap-icons';
+    padding-right: 10px;
+    vertical-align: middle
+}
+#inp_prev:before {
+    content: "\F33E";
+}
+#inp_save:before {
+    content: "\F7C5";
 }

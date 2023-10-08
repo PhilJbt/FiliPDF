@@ -146,10 +146,8 @@ function translate(_name) {
                 inp_fntSiz_lbl: 'Taille du texte',
                 inp_linSpc_lbl: 'Facteur d\'espacement des lignes',
                 inp_texOpa_lbl: 'Opacité du texte',
-                inp_texRec_lbl: 'Texte 1',
-                inp_texRec_pch: 'Destinataire',
-                inp_texSbj_lbl: 'Texte 2',
-                inp_texSbj_pch: 'Objet',
+                inp_texRec_lbl: 'Destinataire',
+                inp_texSbj_lbl: 'Objet',
                 inp_imgQly_lbl: 'Qualité de l\'image',
                 tltp_imgQly: 'Cette option impacte grandement la durée de traitement.',
                 inp_date_lbl: 'Date',
@@ -194,10 +192,8 @@ function translate(_name) {
                 inp_fntSiz_lbl: 'Font size',
                 inp_linSpc_lbl: 'Line spacing factor',
                 inp_texOpa_lbl: 'Text opacity',
-                inp_texRec_lbl: 'Text 1',
-                inp_texRec_pch: 'Recipient',
-                inp_texSbj_lbl: 'Text 2',
-                inp_texSbj_pch: 'Subject',
+                inp_texRec_lbl: 'Recipient',
+                inp_texSbj_lbl: 'Subject',
                 inp_imgQly_lbl: 'Quality',
                 tltp_imgQly: 'This option has a major impact on processing duration.',
                 inp_date_lbl: 'Date',
@@ -249,6 +245,8 @@ function hexToRgb(hex) {
 }
 
 async function proc(_preview) {
+    showError(false);
+    
     document.querySelector('#bar_progress').classList.remove('bg-success');
     document.querySelector('#bar_progress').classList.add('bg-danger');
     document.querySelector('#bar_progress').classList.add('progress-bar-animated');
@@ -320,8 +318,8 @@ async function pdfProcess(_preview, _readerEvent) {
 
         // Declare text specifications
         const textSize = parseInt(document.querySelector('#inp_fntSiz').value);
-        const textWidth = helveticaFont.widthOfTextAtSize(textUserFormat[0], textSize);
-        const textHeight = helveticaFont.heightAtSize(textSize);
+        //const textWidth = helveticaFont.widthOfTextAtSize(textUserFormat[0], textSize);
+        //const textHeight = helveticaFont.heightAtSize(textSize);
         
         // Write text on all pages
         const pagesCount = _preview ? 1 : pages.length;
@@ -342,16 +340,23 @@ async function pdfProcess(_preview, _readerEvent) {
             let heightCurr = -height;
             let idLine = 0;
             while (heightCurr < height) {
-                currentPage.drawText(textUserFormat[(++idLine) % 3], {
-                    x: 0,
-                    y: heightCurr,
-                    size: textSize,
-                    font: helveticaFont,
-                    color: PDFLib.rgb(arrColor.r, arrColor.g, arrColor.b),
-                    blendMode: blendMode_IdToString(document.querySelector('#inp_texBld').value),
-                    opacity: parseFloat(document.querySelector('#inp_texOpa').value),
-                    rotate: PDFLib.degrees(45),
-                });
+                try {
+                    currentPage.drawText(textUserFormat[(++idLine) % 3], {
+                        x: 0,
+                        y: heightCurr,
+                        size: textSize,
+                        font: helveticaFont,
+                        color: PDFLib.rgb(arrColor.r, arrColor.g, arrColor.b),
+                        blendMode: blendMode_IdToString(document.querySelector('#inp_texBld').value),
+                        opacity: parseFloat(document.querySelector('#inp_texOpa').value),
+                        rotate: PDFLib.degrees(45),
+                    });
+                }
+                catch(e) {
+                    buttonsDefaultState();
+                    showError(true, e);
+                    return;
+                }
                 heightCurr += (textSize * 5) * parseFloat(document.querySelector('#inp_linSpc').value);
             }
         }
@@ -487,6 +492,15 @@ function showAlertExport(_show) {
         document.querySelector('#alrt_xprt').style.display = 'block';
     else
         document.querySelector('#alrt_xprt').style.display = 'none';
+}
+
+function showError(_show, _line = '') {
+    if (_show) {
+        document.querySelector('#err_xprt').style.display = 'block';
+        document.querySelector('#err_xprt').textContent = _line;
+    }
+    else
+        document.querySelector('#err_xprt').style.display = 'none';
 }
 
 async function pngToPdf(_preview) {
