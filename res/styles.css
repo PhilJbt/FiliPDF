@@ -53,3 +53,7 @@ label.lbl_cnt:after {
 .lnk_github:hover {
     opacity: 1;
 }
+
+#img_example {
+    opacity: .2;
+}
