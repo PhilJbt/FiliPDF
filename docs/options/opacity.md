@@ -6,4 +6,8 @@
 ### Opacity  
 &#127482;&#127480; Configuring a slight text opacity makes it more difficult for artificial intelligences to remove the watermark without causing severe document degradation, making the document difficult to accept by the receiving party.
 
-<img src="img/opacity_ori.jpg" width="300" height="auto"><img src="img/opacity_res.jpg" width="300" height="auto">
+Original:  
+![](img/opacity_ori.jpg)  
+
+Resultat / Result  
+![](img/opacity_res.jpg)
