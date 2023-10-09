@@ -20,8 +20,8 @@ document.addEventListener('readystatechange', e => {
 function updateButtonsUsable() {
     const btn = [document.querySelector('#inp_prvw'), document.querySelector('#inp_save')];
 
-    if (document.querySelector('#inp_texRec').value.length > 0
-    && document.querySelector('#inp_filPck').value.length > 0) {
+    if (document.querySelector('#inp_filPck').value.length > 0
+        && document.querySelector('#inp_txtLin').value.length > 0) {
         if (btn[0].hasAttribute('disabled'))
             btn[0].removeAttribute('disabled');
         if (btn[1].hasAttribute('disabled'))
@@ -44,8 +44,7 @@ function reset() {
     document.querySelector('#inp_filPck').value = null;
     document.querySelector('#inp_fntSiz').value = 15;
     document.querySelector('#inp_linSpc').value = 1;
-    document.querySelector('#inp_texRec').value = '';
-    document.querySelector('#inp_texSbj').value = '';
+    document.querySelector('#inp_txtLin').value = '';
     document.querySelector('#inp_imgQly').value = 2;
     document.querySelector('#inp_date').value = new Date().toISOString().substring(0, 10);
 
@@ -96,7 +95,7 @@ function init_buttons() {
     });
 
     // Input text subject function binding
-    document.querySelector('#inp_texRec').addEventListener("input", (event) => {
+    document.querySelector('#inp_txtLin').addEventListener("input", (event) => {
         updateButtonsUsable();
     });
 }
@@ -152,9 +151,9 @@ function setOptionsPreset(_id) {
     switch(_id) {
         // Common document
         default:
-            document.querySelector('#inp_fntClr').value = '#7f00ff';
-            document.querySelector('#inp_texBld').value = 3;
-            document.querySelector('#inp_texOpa').value = .3;
+            document.querySelector('#inp_fntClr').value = '#dfff00';
+            document.querySelector('#inp_texBld').value = 4;
+            document.querySelector('#inp_texOpa').value = 1;
             break;
         // Colorful document
         case 2:
@@ -218,9 +217,8 @@ function translate(_id) {
                 case 'inp_fntSiz_lbl':      return 'Taille du texte';
                 case 'inp_linSpc_lbl':      return 'Facteur d\'espacement des lignes';
                 case 'inp_texOpa_lbl':      return 'Opacité du texte';
-                case 'inp_texRec_lbl':      return 'Destinataire';
-                case 'inp_texSbj_lbl':      return 'Objet';
-                case 'inp_texSbj_dsc':      return 'Optionnel';
+                case 'inp_txtLin_lbl':      return 'Texte';
+                case 'inp_txtLin_dsc':      return 'Les lignes multiples sont prises en charge';
                 case 'inp_imgQly_lbl':      return 'Qualité de l\'image';
                 case 'tltp_imgQly_tlp':     return 'Cette option impacte grandement la durée de traitement.';
                 case 'inp_date_lbl':        return 'Date';
@@ -231,7 +229,8 @@ function translate(_id) {
                 case 'inp_save':            return 'Sauvegarder';
                 case 'inp_save_tlp':        return 'Enregistre le PDF avec filigrane.';
                 case 'bar_progress_finish': return 'Terminé !';
-                case 'alrt_xprt':           return '<p class="p_alert">Veuillez patientez, même si la page se fige.</p>';
+                case 'alert_export':        return 'Veuillez patientez, même si la page se fige.';
+                case 'alert_error':         return 'Une erreur s\'est produite';
                 case 'inp_texBld_dsc':      return '(explications)';
                 case 'img_example':         return 'res/img/example_fr.jpg';
                 case 'prset1_tlp':          return 'Défaut';
@@ -266,9 +265,8 @@ function translate(_id) {
                 case 'inp_fntSiz_lbl':      return 'Font size';
                 case 'inp_linSpc_lbl':      return 'Line spacing factor';
                 case 'inp_texOpa_lbl':      return 'Text opacity';
-                case 'inp_texRec_lbl':      return 'Recipient';
-                case 'inp_texSbj_lbl':      return 'Subject';
-                case 'inp_texSbj_dsc':      return 'Optional';
+                case 'inp_txtLin_lbl':      return 'Text lines';
+                case 'inp_txtLin_dsc':      return 'Multiple lines are supported';
                 case 'inp_imgQly_lbl':      return 'Quality';
                 case 'tltp_imgQly_tlp':     return 'This option has a major impact on processing duration.';
                 case 'inp_date_lbl':        return 'Date';
@@ -279,7 +277,8 @@ function translate(_id) {
                 case 'inp_save':            return 'Save';
                 case 'inp_save_tlp':        return 'Saves PDF with watermark.';
                 case 'bar_progress_finish': return 'Finished!';
-                case 'alrt_xprt':           return '<p class="p_alert">Please wait, even if the page freezes.<p>';
+                case 'alert_export':        return 'Please wait, even if the page freezes.';
+                case 'alert_error':         return 'An error occured';
                 case 'inp_texBld_dsc':      return '(explanations)';
                 case 'img_example':         return 'res/img/example_en.jpg';
                 case 'prset1_tlp':          return 'Default';
@@ -362,7 +361,7 @@ function hexToRgb(hex) {
  */
 async function processing(_preview) {
     // Reset components to their initial states
-    showError(false);
+    showMessage(false);
     progressBar('reset'); // Remove its class to disable width transition
 
     // Disable all inputs
@@ -402,8 +401,9 @@ async function processing(_preview) {
  * @param {object} _readerEvent     The PDF data represented as a byte array
  */
 async function processing_TextToPdf(_preview, _readerEvent) {
-    // Import the PDF-Lib lib
+    // Import libs
     const PDFLib = window['PDFLib'];
+    const Fontkit = window['fontkit'];
 
     // Retrieve pdf content
     const content = await _readerEvent.target.result;
@@ -411,8 +411,11 @@ async function processing_TextToPdf(_preview, _readerEvent) {
     // Create the new pdf
     const pdfDoc = await PDFLib.PDFDocument.load(content);
     
+    // Register Fontkit to PdfLib
+    pdfDoc.registerFontkit(Fontkit);
+
     // Retrieve font
-    const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+    const notoFont = await pdfDoc.embedFont(fntNoto);
 
     // Get the pages to watermark
     const pages = await pdfDoc.getPages();
@@ -420,35 +423,62 @@ async function processing_TextToPdf(_preview, _readerEvent) {
     // Store the maximum number of ticks for the progress bar
     // depending on the type of action (first page preview or full export)
     if (_preview)
-        window['filipdf'].progressTick.maximum = 2;
+        window['filipdf'].progressTick.maximum = 3;
     else
         window['filipdf'].progressTick.maximum = pages.length * 4;
 
     // Get the current day date
     let dateNow = (new Date(document.querySelector('#inp_date').value)).toLocaleDateString();
 
-    // Retrieve the user text
-    let dest = (document.querySelector('#inp_texRec').value || '')/* .normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-zA-Z0-9 ]/g, '') */,
-        sbjt = (document.querySelector('#inp_texSbj').value || '')/* .normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-zA-Z0-9 ]/g, '') */;
-    // Format text lines
-    let textUserFormat = [];
-    if (sbjt.length === 0)
-        textUserFormat = [
-            `- ${dest} - ${dateNow} `.split('').join(' ').repeat(5),
-            `- ${dateNow} - ${dest} `.split('').join(' ').repeat(5),
-        ];
-    else
-        textUserFormat = [
-            `- ${dest} - ${sbjt} - ${dateNow} `.split('').join(' ').repeat(4),
-            `- ${dateNow} - ${dest} - ${sbjt} `.split('').join(' ').repeat(4),
-            `- ${sbjt} - ${dateNow} - ${dest} `.split('').join(' ').repeat(4),
-        ];
-
     // Declare text specifications
     const textSize = parseInt(document.querySelector('#inp_fntSiz').value);
     
-    // Write text on all pages
+    // Get the height of the text with the chosen font size
+    const textHeight = notoFont.heightAtSize(textSize);
+
+    // Calculate the wider page of the PDF
     const pagesCount = _preview ? 1 : pages.length;
+    let widthMax = 0;
+    for (let i = 0; i < pagesCount; ++i)
+        if (widthMax < pages[i].getSize().width)
+            widthMax = pages[i].getSize().width;
+
+    // Retrieve the user text lines
+    const delimiter = '\u00B7';
+    let textLinesRaw = [];
+    document.querySelector('#inp_txtLin').value.split(/\r\n|\n|\r/).forEach((line) => {
+        if (line.length !== 0) 
+            textLinesRaw.push(line);
+    });
+    textLinesRaw.push(dateNow);
+
+    // Format text lines
+    const textRotate = 30;
+    let textLinesFormat = [];
+    textLinesRaw.forEach((line) => {
+        let lineBase   = `${line}\t${delimiter}\t`,
+            lineConcat = '';
+
+        try {
+            const test = notoFont.encodeText(lineBase);
+        }
+        catch(e) {
+            buttonsDefaultState();
+            showMessage(true, 'alert-danger', `${translate('alert_error')}: ${e}`);
+            return;
+        }
+
+        // Duplicate the text until the width of the line exceed the width of the page
+        let textWidthRotated = 0;
+        do {
+            const textWidthHorizontal = notoFont.widthOfTextAtSize(lineConcat, textSize);
+            textWidthRotated = textWidthHorizontal * Math.abs(Math.cos(textRotate)) + textHeight * Math.abs(Math.sin(textRotate));   
+            lineConcat += lineBase;
+        } while (textWidthRotated < widthMax);
+        textLinesFormat.push(lineConcat);
+    });
+
+    // Write text on all pages
     for (let i = 0; i < pagesCount; ++i) {
         // Get first page
         const currentPage = await pages[i];
@@ -462,24 +492,24 @@ async function processing_TextToPdf(_preview, _readerEvent) {
         // Set watermark options
         let heightCurr = -height;
         let idLine = 0;
+
         // Continue drawing text lines to the current page until the desired height is reached
         while (heightCurr < height) {
             try {
-                currentPage.drawText(textUserFormat[(++idLine) % textUserFormat.length], {
+                currentPage.drawText(textLinesFormat[(++idLine) % textLinesFormat.length], {
                     x: 0,
                     y: heightCurr,
                     size: textSize,
-                    font: helveticaFont,
+                    font: notoFont,
                     color: PDFLib.rgb(arrColor.r, arrColor.g, arrColor.b),
                     blendMode: blendMode_IdToString(document.querySelector('#inp_texBld').value),
                     opacity: parseFloat(document.querySelector('#inp_texOpa').value),
-                    rotate: PDFLib.degrees(45),
+                    rotate: PDFLib.degrees(textRotate),
                 });
             }
             catch(e) {
                 buttonsDefaultState();
-                showError(true, e);
-                console.log(e);
+                showMessage(true, 'alert-danger', `${translate('alert_error')}: ${e}`)
                 return;
             }
 
@@ -588,7 +618,7 @@ async function processing_PdfToPng(_preview, _pdfBytes) {
                     // For the last page processing
                     if (++window['filipdf'].document.pages.processed == pagesMax) {
                         // Warn the user the window will freeze
-                        showAlertExport(true);
+                        showMessage(true, 'alert-info', translate('alert_export'));
 
                         // Wait for the next frame to display the alert
                         window.requestAnimationFrame(async function() {
@@ -617,7 +647,7 @@ async function processing_PdfToPng(_preview, _pdfBytes) {
  * Reset alerts, progress bar and buttons to their initial states
  */
 function buttonsDefaultState() {
-    showAlertExport(false);
+    showMessage(false);
 
     document.querySelectorAll('input, select, button').forEach((button) => {
         button.removeAttribute('disabled', 'disabled');
@@ -627,30 +657,28 @@ function buttonsDefaultState() {
 }
 
 /**
- * @showAlertExport
- * Show or hide the export alert
- * @param {bool} _show      Does the alert has to be shown or hidden
- */
-function showAlertExport(_show) {
-    if (_show)
-        document.querySelector('#alrt_xprt').style.display = 'block';
-    else
-        document.querySelector('#alrt_xprt').style.display = 'none';
-}
-
-/**
- * @showError
- * Show a message as an alert, or hide it
+ * @showMessage
+ * Show a an alert message to the user, or hide it
  * @param {bool}   _show      Does the alert has to be shown or hidden
  * @param {string} _line      The message to be shown
  */
-function showError(_show, _line = '') {
+function showMessage(_show, _type = '', _line = '') {
+    let alert = document.querySelector('#alert_message');
     if (_show) {
-        document.querySelector('#err_xprt').style.display = 'block';
-        document.querySelector('#err_xprt').textContent = _line;
+        let icon = '';
+        switch(_type) {
+            case 'alert-info':   icon = '<i class="bi bi-info-circle-fill"></i>';          break;
+            case 'alert-danger': icon = '<i class="bi bi-exclamation-triangle-fill"></i>'; break;
+        }
+
+        alert.classList.remove('alert-info');
+        alert.classList.remove('alert-danger');
+        alert.classList.add(_type);
+        alert.innerHTML = `${icon} ${_line}`;
+        alert.style.display = 'block';
     }
     else
-        document.querySelector('#err_xprt').style.display = 'none';
+        alert.style.display = 'none';
 }
 
 /**
@@ -720,4 +748,69 @@ async function pdfDownload(_preview, _pdfBytes) {
         link.download = filename;
         link.click();
     }
+}
+
+/**
+ * @getTextLanguage
+ * Get the name of the language of the given text
+ * @param {string} _text     The user text to check
+ */
+function getTextLanguage(_text) {
+	let text = _text.replace(/\s/g, '');
+
+
+    /*
+        French
+        English
+        Spanish
+        Italian
+        Portuguese
+        Romanian
+        
+        Arabic
+
+        Japanese
+        Korean
+
+        Russian
+        
+        Hindi
+        
+        
+        Bengali
+        Indonesian
+        Turkish
+        Bulgarian
+        Tamil
+        Chinese
+        Vietnamese
+        Telugu
+        Urdu
+        Punjabi
+        Javanese
+        Marathi
+        Nepali
+
+    */
+	var langdic = {
+	    "Arabic" : /[\u0600-\u06FF]/,
+	    "Persian" : /[\u0750-\u077F]/,
+	    "Hebrew" : /[\u0590-\u05FF]/,
+	    "Syriac" : /[\u0700-\u074F]/,
+	    "Bengali" : /[\u0980-\u09FF]/,
+	    "Ethiopic" : /[\u1200-\u137F]/,
+	    "Greek and Coptic" : /[\u0370-\u03FF]/,
+	    "Georgian" : /[\u10A0-\u10FF]/,
+	    "Thai" : /[\u0E00-\u0E7F]/,
+	    "Latin" : /^[a-zA-Z]+$/,
+	};
+	const keys = Object.entries(langdic);
+	let res = undefined;
+	Object.entries(langdic).forEach(([key, value]) => {
+		if (value.test(text) === true) {
+		 	res = key;
+            return res;
+		}
+	});
+	return res;
 }

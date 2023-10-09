@@ -26,7 +26,7 @@ body {
     pointer-events: none;
 }
 
-#inp_texRec:placeholder-shown {
+#inp_txtLin:placeholder-shown {
     box-shadow: 0 0 0 .25rem rgba(253, 13, 13, 0.25) !important;
 }
 
@@ -56,7 +56,7 @@ body {
 }
 
 /* Alerts */
-#alrt_xprt, #err_xprt {
+#alert_message {
     display: none;
     position: absolute;
     width: 100%;
