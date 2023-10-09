@@ -2,39 +2,7 @@ body {
     user-select: none;
 }
 
-label.lbl_cnt:after {
-    content: " : " attr(data-content);
-}
-
-#canvas {
-    background-color: #ddd;
-    min-width: 618px;
-    min-height: 800px;
-    padding: 20px;
-}
-
-#alrt_xprt, #err_xprt {
-    display: none;
-    position: absolute;
-    width: 100%;
-}
-
-.p_alert {
-    padding: 0;
-    margin: 0;
-}
-
-.txt_dsc {
-    font-size: 14px;
-    float: right;
-    margin: 0;
-    padding: 0;
-}
-
-.tooltip {
-    pointer-events: none;
-}
-
+/* Makes the menu and preview sticky when scrolling */
 .bar_sticky {
     position: sticky;
     background-attachment: scroll;
@@ -54,18 +22,64 @@ label.lbl_cnt:after {
     opacity: 1;
 }
 
-#img_example {
-    opacity: .2;
+.tooltip {
+    pointer-events: none;
 }
 
-#inp_prev:before, #inp_save:before {
+#inp_texRec:placeholder-shown {
+    box-shadow: 0 0 0 .25rem rgba(253, 13, 13, 0.25) !important;
+}
+
+/* Preview and Save buttons */
+#inp_prvw:before, #inp_save:before {
     font-family: 'bootstrap-icons';
     padding-right: 10px;
     vertical-align: middle
 }
-#inp_prev:before {
+#inp_prvw:before {
     content: "\F33E";
 }
 #inp_save:before {
     content: "\F7C5";
+}
+
+/* Preview container */
+#canvas-container {
+    background-color: #ddd;
+    min-width: 618px;
+    min-height: 800px;
+    padding: 20px;
+}
+
+#img_example {
+    opacity: .2;
+}
+
+/* Alerts */
+#alrt_xprt, #err_xprt {
+    display: none;
+    position: absolute;
+    width: 100%;
+}
+
+/* Inputs text labels */
+label.lbl_cnt:after {
+    content: " : " attr(data-content);
+}
+
+/* Inputs text labels floating right */
+.txt_dsc {
+    font-size: 14px;
+    float: right;
+    margin: 0;
+    padding: 0;
+}
+
+/* Customize the progress bar animation */
+.progress-bar {
+    transition-duration: .25s !important;
+}
+
+.progress-bar-animated {
+    animation: 0.3s linear infinite progress-bar-stripes !important;
 }

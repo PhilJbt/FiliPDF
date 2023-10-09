@@ -1,61 +1,46 @@
+
+/**
+ * Fired up when the loading state of the page changes
+ * Engage all initializations
+ */
 document.addEventListener('readystatechange', e => {
+    // If the page is fully loaded
     if (e.target.readyState === "complete") {
+        reset();    
         init();
-        translate_init();
-        initComp();
     }
 }, false);
 
-function updateButtonLabels() {
-    document.querySelectorAll('label.lbl_cnt').forEach((div) => {
-        div.setAttribute('data-content', document.querySelector(`#${div.getAttribute('for')}`).value);
-    });
 
-    document.querySelectorAll('input').forEach((div) => {
-        div.addEventListener("input", (event) => {
-            document.querySelector(`#${div.id}_lbl`).setAttribute('data-content', div.value);
-        }); 
-    });
-}
+/**
+ * @updateButtonsUsable
+ * Set if the preview and export buttons are disabled or not,
+ * depending on if the user file selected exists and the length of the value of the subject text input
+ */
+function updateButtonsUsable() {
+    const btn = [document.querySelector('#inp_prvw'), document.querySelector('#inp_save')];
 
-function setPreset(_id) {
-    switch(_id) {
-        default:
-            document.querySelector('#inp_fntClr').value = '#7f00ff';
-            document.querySelector('#inp_texBld').value = 6;
-            document.querySelector('#inp_texOpa').value = .3;
-            break;
-
-        case 2:
-            document.querySelector('#inp_fntClr').value = '#ffffff';
-            document.querySelector('#inp_texBld').value = 5;
-            document.querySelector('#inp_texOpa').value = .6;
-            break;
-
-        case 3:
-            document.querySelector('#inp_fntClr').value = '#000000';
-            document.querySelector('#inp_texBld').value = 11;
-            document.querySelector('#inp_texOpa').value = 1;
-            break;
-
-        case 4:
-            document.querySelector('#inp_fntClr').value = '#ffffff';
-            document.querySelector('#inp_texBld').value = 5;
-            document.querySelector('#inp_texOpa').value = .6;
-            break;
-
-        case 5:
-            document.querySelector('#inp_fntClr').value = '#ffffff';
-            document.querySelector('#inp_texBld').value = 1;
-            document.querySelector('#inp_texOpa').value = .5;
-            break;
+    if (document.querySelector('#inp_texRec').value.length > 0
+    && document.querySelector('#inp_filPck').value.length > 0) {
+        if (btn[0].hasAttribute('disabled'))
+            btn[0].removeAttribute('disabled');
+        if (btn[1].hasAttribute('disabled'))
+            btn[1].removeAttribute('disabled');
     }
-
-    updateButtonLabels();
+    else {
+        if (!btn[0].hasAttribute('disabled'))
+            btn[0].setAttribute('disabled', 'disabled');
+        if (!btn[1].hasAttribute('disabled'))
+            btn[1].setAttribute('disabled', 'disabled');
+    }
 }
 
+/**
+ * @reset
+ * Set UI in its starting state
+ */
 function reset() {
-    setPreset('1');
+    // Bypass browser cache
     document.querySelector('#inp_filPck').value = null;
     document.querySelector('#inp_fntSiz').value = 15;
     document.querySelector('#inp_linSpc').value = 1;
@@ -64,170 +49,296 @@ function reset() {
     document.querySelector('#inp_imgQly').value = 2;
     document.querySelector('#inp_date').value = new Date().toISOString().substring(0, 10);
 
-    updateButtonLabels();
+    updateButtonsUsable();
 
-    document.querySelector('#inp_prev').setAttribute('disabled', 'disabled');
-    document.querySelector('#inp_save').setAttribute('disabled', 'disabled');
+    // Load the color/blend mode/opacity default preset
+    setOptionsPreset('1');
 }
 
+/**
+ * @init
+ * Runs all necessary initializations (bootstrap, events listeners, translation process)
+ */
 function init() {
-    reset();
-    
-    document.querySelector('#inp_filPck').addEventListener("input", (event) => {
-        const btn = [document.querySelector('#inp_prev'), document.querySelector('#inp_save')];
+    // Declare the global array of FiliPDF data
+    window['filipdf'] = {
+        progressTick: {
+            current: 0,
+            maximum: 0,
+        },
+        userFile: null,
+        document :{
+            images: {
+                // data: [], // Byte array of the png image
+                // width: 0, // The width of the specificed original PDF page
+                // height: 0, // The height of the specified original PDF page
+            },
+            pages: {
+                total: 0,
+                processed: 0,
+            },
+        },
+    };
 
-        if (document.querySelector('#inp_filPck').files.length === 0) {
-            btn[0].setAttribute('disabled', 'disabled');
-            btn[1].setAttribute('disabled', 'disabled');
-        }
-        else {
-            btn[0].removeAttribute('disabled');
-            btn[1].removeAttribute('disabled');
-        }
+    init_buttons();
+    init_translate();
+    init_components();
+}
+
+/**
+ * @init_buttons
+ * Initialize the file input button to enable or disable depending on if the user selected a file
+ */
+function init_buttons() {
+    // Input file picker function binding
+    document.querySelector('#inp_filPck').addEventListener("input", (event) => {
+        updateButtonsUsable();
+    });
+
+    // Input text subject function binding
+    document.querySelector('#inp_texRec').addEventListener("input", (event) => {
+        updateButtonsUsable();
     });
 }
 
-function initComp() {
+/**
+ * @init_translate
+ * Fill the DOM with the localized text
+ */
+function init_translate() {
+    /* ! Some nodes have multiple translation classes, do not add 'else' statement, this is not a mistake.
+    * For example, the Preview button has both text (textContent) and label (data-bs-title).
+    */
+    document.querySelectorAll('.trans-txc, .trans-plh, .trans-inh, .trans-dat, .trans-src').forEach((div) => {
+        if (div.classList.contains('trans-txc'))
+            div.textContent = translate(div.id);
+        if (div.classList.contains('trans-inh'))
+            div.innerHTML = translate(div.id);
+        if (div.classList.contains('trans-dat'))
+            div.setAttribute('data-bs-title', translate(`${div.id}_tlp`));
+        if (div.classList.contains('trans-src'))
+            div.src = translate(div.id);
+    });
+}
+
+/**
+ * @init_components
+ * Initialization of all bootstrap components
+ */
+function init_components() {
+    // Tooltips initialization
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl, {
             trigger : 'hover'
         });
-    })
-}
-
-function translate_init() {
-    document.querySelector('#inp_texRec').placeholder = translate('inp_texRec_pch');
-    document.querySelector('#inp_texSbj').placeholder = translate('inp_texSbj_pch');
-    document.querySelector('#alrt_xprt').innerHTML = translate('alrt_xprt');
-    document.querySelectorAll('#inp_texBld_dsc').forEach((div) => {
-        div.innerHTML = translate('inp_texBld_dsc');
     });
 
-    document.querySelector('#tltp_imgQly').setAttribute('data-bs-title', translate('tltp_imgQly'));
-    document.querySelector('#inp_prev').setAttribute('data-bs-title', translate('inp_prev_pvr'));
-    document.querySelector('#inp_save').setAttribute('data-bs-title', translate('inp_save_pvr'));
-
-    document.querySelectorAll('.prset_dsc').forEach((div) => {
-        div.setAttribute('data-bs-title', translate(div.id));
-    });
-
-    document.getElementById('img_example').src = translate('img_example');
-    
-    document.querySelectorAll('.trans').forEach((div) => {
-        div.textContent = translate(div.id);
+    // Labels initialization and event listener binding
+    document.querySelectorAll('input').forEach((div) => {
+        document.querySelector(`#${div.id}_lbl`).setAttribute('data-content', div.value);
+        div.addEventListener("input", (event) => {
+            document.querySelector(`#${div.id}_lbl`).setAttribute('data-content', div.value);
+        }); 
     });
 }
 
-function translate(_name) {
-    let arrTexts = {};
-    const lang = (navigator.language || navigator.userLanguage).substring(0, 2);
-    switch(lang) {
-        case 'fr':
-            arrTexts = {
-                bdy_ttl: 'Appliquer un filigrane sur un PDF',
-                bdy_dsc: 'L\'ensemble du processus est traité sur votre ordinateur personnel, aucune de vos données ne transite ailleurs.',
-                bdy_add: 'Pour cette raison, l\'application du filigrane peut être lent en fonction de votre materiel informatique, de la taille et du nombre de pages de votre document, ainsi que la qualité d\'image sélectionnée.',
-                inp_filPck_lbl: 'Le PDF auquel appliquer le filigrane',
-                inp_fntClr_lbl: 'Couleur de la police',
-                inp_texBld_lbl: 'Mode de fusion',
-                slc_nrml: 'Normal',
-                slc_diff: 'Différence',
-                slc_xclu: 'Exclusion',
-                slc_mlti: 'Produit',
-                slc_ovrl: 'Incrustation',
-                slc_scrn: 'Superposition',
-                slc_clrb: 'Densité couleur +',
-                slc_clrd: 'Densité couleur -',
-                slc_drkn: 'Obscurcir',
-                slc_ligh: 'Lumière crue',
-                slc_ligt: 'Eclaircir',
-                slc_ligs: 'Lumière tamisée',
-                inp_fntSiz_lbl: 'Taille du texte',
-                inp_linSpc_lbl: 'Facteur d\'espacement des lignes',
-                inp_texOpa_lbl: 'Opacité du texte',
-                inp_texRec_lbl: 'Destinataire',
-                inp_texSbj_lbl: 'Objet',
-                inp_imgQly_lbl: 'Qualité de l\'image',
-                tltp_imgQly: 'Cette option impacte grandement la durée de traitement.',
-                inp_date_lbl: 'Date',
-                btn_presets: 'Pré-réglages',
-                txt_prev: 'Prévisualisation :',
-                inp_prev: 'Prévisualiser',
-                inp_prev_pvr: 'Prévisualise la première page du PDF avec filigrane.',
-                inp_save: 'Sauvegarder',
-                inp_save_pvr: 'Enregistre le PDF avec filigrane.',
-                bar_progress_finish: 'Terminé !',
-                alrt_xprt: '<p class="p_alert">Veuillez patientez, même si la page se fige.</p>',
-                inp_texBld_dsc: '(explications)',
-                img_example:'res/img/example_fr.jpg',
-                prset1_dsc: 'Défaut',
-                prset2_dsc: 'Document coloré',
-                prset3_dsc: 'Document aux tons clairs',
-                prset4_dsc: 'Document aux tons foncés',
-                prset5_dsc: 'Document aux couleurs contrastées',
-            };
-            break;
-
+/**
+ * @setOptionsPreset
+ * Load options values
+ * @param {number} _id      ID of the options preset selected
+ */
+function setOptionsPreset(_id) {
+    switch(_id) {
+        // Common document
         default:
-            arrTexts = {
-                bdy_ttl: 'Apply Watermark on a PDF',
-                bdy_dsc: 'The entire process is handled on your personal computer, none of your data is sent anywhere else.',
-                bdy_add: 'For this reason, watermarking can be slow depending on your computer hardware, the size and number of pages of your document, and the image quality selected.',
-                inp_filPck_lbl: 'The PDF to watermark',
-                inp_fntClr_lbl: 'Font color',
-                inp_texBld_lbl: 'Blend mode',
-                slc_nrml: 'Normal',
-                slc_diff: 'Difference',
-                slc_xclu: 'Exclusion',
-                slc_mlti: 'Multiply',
-                slc_ovrl: 'Overlay',
-                slc_scrn: 'Screen',
-                slc_clrb: 'ColorBurn',
-                slc_clrd: 'ColorDodge',
-                slc_drkn: 'Darken',
-                slc_ligh: 'HardLight',
-                slc_ligt: 'Lighten',
-                slc_ligs: 'SoftLight',
-                inp_fntSiz_lbl: 'Font size',
-                inp_linSpc_lbl: 'Line spacing factor',
-                inp_texOpa_lbl: 'Text opacity',
-                inp_texRec_lbl: 'Recipient',
-                inp_texSbj_lbl: 'Subject',
-                inp_imgQly_lbl: 'Quality',
-                tltp_imgQly: 'This option has a major impact on processing duration.',
-                inp_date_lbl: 'Date',
-                btn_presets: 'Presets',
-                txt_prev: 'Preview:',
-                inp_prev: 'Preview',
-                inp_prev_pvr: 'Preview the first page of the watermarked PDF.',
-                inp_save: 'Save',
-                inp_save_pvr: 'Saves PDF with watermark.',
-                bar_progress_finish: 'Finished!',
-                alrt_xprt: '<p class="p_alert">Please wait, even if the page freezes.<p>',
-                inp_texBld_dsc: '(explanations)',
-                img_example:'res/img/example_en.jpg',
-                prset1_dsc: 'Default',
-                prset2_dsc: 'Colorful document',
-                prset3_dsc: 'Document with light tones',
-                prset4_dsc: 'Dark-toned document',
-                prset5_dsc: 'Document with contrasting colors',
-            };
+            document.querySelector('#inp_fntClr').value = '#7f00ff';
+            document.querySelector('#inp_texBld').value = 6;
+            document.querySelector('#inp_texOpa').value = .3;
+            break;
+        // Colorful document
+        case 2:
+            document.querySelector('#inp_fntClr').value = '#ffffff';
+            document.querySelector('#inp_texBld').value = 5;
+            document.querySelector('#inp_texOpa').value = .6;
+            break;
+        // Bright document
+        case 3:
+            document.querySelector('#inp_fntClr').value = '#000000';
+            document.querySelector('#inp_texBld').value = 11;
+            document.querySelector('#inp_texOpa').value = 1;
+            break;
+        // Darken document
+        case 4:
+            document.querySelector('#inp_fntClr').value = '#ffffff';
+            document.querySelector('#inp_texBld').value = 5;
+            document.querySelector('#inp_texOpa').value = .6;
+            break;
+        // Contrasted document
+        case 5:
+            document.querySelector('#inp_fntClr').value = '#ffffff';
+            document.querySelector('#inp_texBld').value = 1;
+            document.querySelector('#inp_texOpa').value = .5;
             break;
     }
-
-    return arrTexts[_name];
 }
 
-async function updateProgressBar() {
-    let valueProgress = ((++window.progressBarCur / window.progressBarMax) * 100).toFixed(0);
-    let prcntProgress = `${valueProgress}%`;
-    
-    document.querySelector('#bar_progress').style.width = prcntProgress;
-    document.querySelector('#bar_progress').textContent = prcntProgress;
+/**
+ * @
+ * 
+ * @param {string} _id      ID of the div
+ */
+function translate(_id) {
+    // Retrieve the ISO 639-1 language code
+    const lang = (navigator.language || navigator.userLanguage).substring(0, 2);
+
+    // Depending on the browser language
+    switch(lang) {
+        // French
+        case 'fr':
+            switch (_id) {
+                case 'bdy_ttl':             return 'Appliquer un filigrane sur un PDF';
+                case 'bdy_dsc':             return 'L\'ensemble du processus est traité sur votre ordinateur personnel, aucune de vos données ne transite ailleurs.';
+                case 'bdy_add':             return 'Pour cette raison, l\'application du filigrane peut être lent en fonction de votre materiel informatique, de la taille et du nombre de pages de votre document, ainsi que la qualité d\'image sélectionnée.';
+                case 'inp_filPck_lbl':      return 'Le PDF auquel appliquer le filigrane';
+                case 'inp_fntClr_lbl':      return 'Couleur de la police';
+                case 'inp_texBld_lbl':      return 'Mode de fusion';
+                case 'slc_nrml':            return 'Normal';
+                case 'slc_diff':            return 'Différence';
+                case 'slc_xclu':            return 'Exclusion';
+                case 'slc_mlti':            return 'Produit';
+                case 'slc_ovrl':            return 'Incrustation';
+                case 'slc_scrn':            return 'Superposition';
+                case 'slc_clrb':            return 'Densité couleur +';
+                case 'slc_clrd':            return 'Densité couleur -';
+                case 'slc_drkn':            return 'Obscurcir';
+                case 'slc_ligh':            return 'Lumière crue';
+                case 'slc_ligt':            return 'Eclaircir';
+                case 'slc_ligs':            return 'Lumière tamisée';
+                case 'inp_fntSiz_lbl':      return 'Taille du texte';
+                case 'inp_linSpc_lbl':      return 'Facteur d\'espacement des lignes';
+                case 'inp_texOpa_lbl':      return 'Opacité du texte';
+                case 'inp_texRec_lbl':      return 'Destinataire';
+                case 'inp_texSbj_lbl':      return 'Objet';
+                case 'inp_texSbj_dsc':      return 'Optionnel';
+                case 'inp_imgQly_lbl':      return 'Qualité de l\'image';
+                case 'tltp_imgQly_tlp':     return 'Cette option impacte grandement la durée de traitement.';
+                case 'inp_date_lbl':        return 'Date';
+                case 'btn_presets':         return 'Pré-réglages';
+                case 'txt_prvw':            return 'Prévisualisation :';
+                case 'inp_prvw':            return 'Prévisualiser';
+                case 'inp_prvw_tlp':        return 'Prévisualise la première page du PDF avec filigrane.';
+                case 'inp_save':            return 'Sauvegarder';
+                case 'inp_save_tlp':        return 'Enregistre le PDF avec filigrane.';
+                case 'bar_progress_finish': return 'Terminé !';
+                case 'alrt_xprt':           return '<p class="p_alert">Veuillez patientez, même si la page se fige.</p>';
+                case 'inp_texBld_dsc':      return '(explications)';
+                case 'img_example':         return 'res/img/example_fr.jpg';
+                case 'prset1_tlp':          return 'Défaut';
+                case 'prset2_tlp':          return 'Document coloré';
+                case 'prset3_tlp':          return 'Document aux tons clairs';
+                case 'prset4_tlp':          return 'Document aux tons foncés';
+                case 'prset5_tlp':          return 'Document aux couleurs contrastées';
+            }
+            break;
+
+        // Any other language
+        default:
+            switch (_id) {
+                case 'bdy_ttl':             return 'Apply Watermark on a PDF';
+                case 'bdy_dsc':             return 'The entire process is handled on your personal computer, none of your data is sent anywhere else.';
+                case 'bdy_add':             return 'For this reason, watermarking can be slow depending on your computer hardware, the size and number of pages of your document, and the image quality selected.';
+                case 'inp_filPck_lbl':      return 'The PDF to watermark';
+                case 'inp_fntClr_lbl':      return 'Font color';
+                case 'inp_texBld_lbl':      return 'Blend mode';
+                case 'slc_nrml':            return 'Normal';
+                case 'slc_diff':            return 'Difference';
+                case 'slc_xclu':            return 'Exclusion';
+                case 'slc_mlti':            return 'Multiply';
+                case 'slc_ovrl':            return 'Overlay';
+                case 'slc_scrn':            return 'Screen';
+                case 'slc_clrb':            return 'ColorBurn';
+                case 'slc_clrd':            return 'ColorDodge';
+                case 'slc_drkn':            return 'Darken';
+                case 'slc_ligh':            return 'HardLight';
+                case 'slc_ligt':            return 'Lighten';
+                case 'slc_ligs':            return 'SoftLight';
+                case 'inp_fntSiz_lbl':      return 'Font size';
+                case 'inp_linSpc_lbl':      return 'Line spacing factor';
+                case 'inp_texOpa_lbl':      return 'Text opacity';
+                case 'inp_texRec_lbl':      return 'Recipient';
+                case 'inp_texSbj_lbl':      return 'Subject';
+                case 'inp_texSbj_dsc':      return 'Optional';
+                case 'inp_imgQly_lbl':      return 'Quality';
+                case 'tltp_imgQly_tlp':     return 'This option has a major impact on processing duration.';
+                case 'inp_date_lbl':        return 'Date';
+                case 'btn_presets':         return 'Presets';
+                case 'txt_prvw':            return 'Preview:';
+                case 'inp_prvw':            return 'Preview';
+                case 'inp_prvw_tlp':        return 'Preview the first page of the watermarked PDF.';
+                case 'inp_save':            return 'Save';
+                case 'inp_save_tlp':        return 'Saves PDF with watermark.';
+                case 'bar_progress_finish': return 'Finished!';
+                case 'alrt_xprt':           return '<p class="p_alert">Please wait, even if the page freezes.<p>';
+                case 'inp_texBld_dsc':      return '(explanations)';
+                case 'img_example':         return 'res/img/example_en.jpg';
+                case 'prset1_tlp':          return 'Default';
+                case 'prset2_tlp':          return 'Colorful document';
+                case 'prset3_tlp':          return 'Document with light tones';
+                case 'prset4_tlp':          return 'Dark-toned document';
+                case 'prset5_tlp':          return 'Document with contrasting colors';
+            }
+            break;
+    }
 }
 
-// Modified, original from 1047797/david, https://stackoverflow.com/a/11508164
+/**
+ * @progressBar
+ * Modifies the progress bar (init, update, etc)
+ * @param {string} _pass    Type of action to be applied to progress bar 
+ */
+function progressBar(_pass) {
+    let bar = document.querySelector('#bar_progress');
+
+    // Before each new processing
+    if (_pass === 'reset') {
+        bar.classList.remove('bg-success');
+        bar.classList.add('bg-danger');
+        bar.classList.add('progress-bar-animated');
+        bar.classList.add('progress-bar-striped');
+        bar.classList.remove('progress-bar');
+        bar.style.width = '0%';
+        bar.textContent = '0%';
+    }
+    // At the start of each new treatment
+    else if (_pass === 'engage')
+        bar.classList.add('progress-bar'); // Enable back width transition after reset width in 1 frame
+    // Update the width of the progress bar
+    else if (_pass === 'update') {
+        let valueProgress = ((++window['filipdf'].progressTick.current / window['filipdf'].progressTick.maximum) * 100).toFixed(0);
+        let prcntProgress = `${valueProgress}%`;
+        
+        bar.style.width = prcntProgress;
+        bar.textContent = prcntProgress;
+    }
+    // Show the progress bar in its final state
+    else if (_pass === 'finish') {
+        bar.classList.remove('progress-bar-animated');
+        bar.classList.remove('progress-bar-striped');
+        bar.classList.remove('bg-danger');
+        bar.classList.add('bg-success');
+        bar.textContent = translate('bar_progress_finish');
+        //bar.style.width = '100%';
+    }
+}
+
+/**
+ * @hexToRgb
+ * Converts a hexadecimal to a rgb color
+ * @param {string} _id      ID of the div
+ * @author <1047797/david>
+ * @see {@link https://stackoverflow.com/a/11508164}
+ */
 function hexToRgb(hex) {
     let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
     hex = hex.replace(shorthandRegex, function(m, r, g, b) {
@@ -244,235 +355,267 @@ function hexToRgb(hex) {
     return arrRes;
 }
 
-async function proc(_preview) {
+/**
+ * @processing
+ * Apply text to each pages of the PDF provided, converts all pages to images, embed images into a new pdf document, engage download of the latter
+ * @param {bool} _preview      If true: process the first page and do not engage download, if false: process all pages and engage download
+ */
+async function processing(_preview) {
+    // Reset components to their initial states
     showError(false);
-    
-    document.querySelector('#bar_progress').classList.remove('bg-success');
-    document.querySelector('#bar_progress').classList.add('bg-danger');
-    document.querySelector('#bar_progress').classList.add('progress-bar-animated');
+    progressBar('reset'); // Remove its class to disable width transition
 
+    // Disable all inputs
     document.querySelectorAll('input, select, button').forEach((button) => {
         button.setAttribute('disabled', 'disabled');
     });
 
+    // Prepare for a preview image update
     if (_preview)
-        document.querySelector('#canvas').innerHTML = '';
+        document.querySelector('#canvas-container').innerHTML = '';
 
-    document.querySelector('#bar_progress').classList.remove('progress-bar');
-    document.querySelector('#bar_progress').style.width = '0%';
-    document.querySelector('#bar_progress').textContent = '0%';
-
+    // Once a new frame has been drawn (with the progress bar empty)
     window.requestAnimationFrame(async function() {
-        document.querySelector('#bar_progress').classList.add('progress-bar');
-        window.progressBarCur = 0;
-
-        window.pageProcessedCount = 0;
+        progressBar('engage'); // Add its class to enable the width back
         
+        // Retrieve the user file
         let userFile = document.querySelector('#inp_filPck').files[0];
-        window.userFile = userFile;
+
+        // Release the previously generated or stored data
+        window['filipdf'].userFile = userFile;
+        window['filipdf'].progressTick.current = 0;
+        window['filipdf'].document.pages.processed = 0;
     
+        // Start the PDF global processing
         var reader = await new FileReader();
-        
         reader.onload = async (readerEvent) => {
-            // Watermark the PDF, convert PDF pages to PNGs, embed PNGs to a new PDF, download the PDF
-            await pdfProcess(_preview, readerEvent);
+            await processing_TextToPdf(_preview, readerEvent); // Watermark the PDF, convert PDF pages to PNGs, embed PNGs to a new PDF, download the PDF
         };
-    
         await reader.readAsArrayBuffer(userFile);
     });
 }
 
-async function pdfProcess(_preview, _readerEvent) {
-    // Import PDF-Lib
-        const PDFLib = window['PDFLib'];
+/**
+ * @processing_TextToPdf
+ * Apply the desired text to every pages of a PDF document
+ * @param {bool}   _preview         If true: process the first page and do not engage download, if false: process all pages and engage download
+ * @param {object} _readerEvent     The PDF data represented as a byte array
+ */
+async function processing_TextToPdf(_preview, _readerEvent) {
+    // Import the PDF-Lib lib
+    const PDFLib = window['PDFLib'];
 
-        // Retrieve pdf content
-        const content = await _readerEvent.target.result;
+    // Retrieve pdf content
+    const content = await _readerEvent.target.result;
 
-        // Create the new pdf
-        const pdfDoc = await PDFLib.PDFDocument.load(content);
-        
-        // Retrieve font
-        const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+    // Create the new pdf
+    const pdfDoc = await PDFLib.PDFDocument.load(content);
+    
+    // Retrieve font
+    const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
 
-        // Get the pages to watermark
-        const pages = await pdfDoc.getPages();
+    // Get the pages to watermark
+    const pages = await pdfDoc.getPages();
 
-        // Store the maximum number of steps for the progress bar
-        if (_preview)
-            window.progressBarMax = 3;
-        else
-            window.progressBarMax = pages.length * 4;
+    // Store the maximum number of ticks for the progress bar
+    // depending on the type of action (first page preview or full export)
+    if (_preview)
+        window['filipdf'].progressTick.maximum = 2;
+    else
+        window['filipdf'].progressTick.maximum = pages.length * 4;
 
-        // Get date
-        let dateNow = (new Date(document.querySelector('#inp_date').value)).toLocaleDateString();
+    // Get the current day date
+    let dateNow = (new Date(document.querySelector('#inp_date').value)).toLocaleDateString();
 
-        // Format the user text
-        let to = document.querySelector('#inp_texRec').value || '****************',
-            about = document.querySelector('#inp_texSbj').value || '****************';
-        let textUserFormat = [
-            `- ${to} - ${about} - ${dateNow} `.split('').join(' ').repeat(4).toUpperCase(),
-            `- ${dateNow} - ${to} - ${about} `.split('').join(' ').repeat(4).toUpperCase(),
-            `- ${about} - ${dateNow} - ${to} `.split('').join(' ').repeat(4).toUpperCase(),
+    // Retrieve the user text
+    let dest = (document.querySelector('#inp_texRec').value || '')/* .normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-zA-Z0-9 ]/g, '') */,
+        sbjt = (document.querySelector('#inp_texSbj').value || '')/* .normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-zA-Z0-9 ]/g, '') */;
+    // Format text lines
+    let textUserFormat = [];
+    if (sbjt.length === 0)
+        textUserFormat = [
+            `- ${dest} - ${dateNow} `.split('').join(' ').repeat(5),
+            `- ${dateNow} - ${dest} `.split('').join(' ').repeat(5),
+        ];
+    else
+        textUserFormat = [
+            `- ${dest} - ${sbjt} - ${dateNow} `.split('').join(' ').repeat(4),
+            `- ${dateNow} - ${dest} - ${sbjt} `.split('').join(' ').repeat(4),
+            `- ${sbjt} - ${dateNow} - ${dest} `.split('').join(' ').repeat(4),
         ];
 
-        // Declare text specifications
-        const textSize = parseInt(document.querySelector('#inp_fntSiz').value);
-        //const textWidth = helveticaFont.widthOfTextAtSize(textUserFormat[0], textSize);
-        //const textHeight = helveticaFont.heightAtSize(textSize);
-        
-        // Write text on all pages
-        const pagesCount = _preview ? 1 : pages.length;
-        for (let i = 0; i < pagesCount; ++i) {
-            // 
-            await updateProgressBar();
+    // Declare text specifications
+    const textSize = parseInt(document.querySelector('#inp_fntSiz').value);
+    
+    // Write text on all pages
+    const pagesCount = _preview ? 1 : pages.length;
+    for (let i = 0; i < pagesCount; ++i) {
+        // Get first page
+        const currentPage = await pages[i];
 
-            // Get first page
-            const currentPage = await pages[i];
+        // Retrieve page size
+        const { width, height } = currentPage.getSize();
 
-            // Retrieve page size
-            const { width, height } = currentPage.getSize();
+        // Retrieve the HEXA user selected color, and convert it to RGB form
+        const arrColor = hexToRgb(document.querySelector('#inp_fntClr').value);
 
-            // Convert color
-            const arrColor = hexToRgb(document.querySelector('#inp_fntClr').value);
-
-            // Set watermark options
-            let heightCurr = -height;
-            let idLine = 0;
-            while (heightCurr < height) {
-                try {
-                    currentPage.drawText(textUserFormat[(++idLine) % 3], {
-                        x: 0,
-                        y: heightCurr,
-                        size: textSize,
-                        font: helveticaFont,
-                        color: PDFLib.rgb(arrColor.r, arrColor.g, arrColor.b),
-                        blendMode: blendMode_IdToString(document.querySelector('#inp_texBld').value),
-                        opacity: parseFloat(document.querySelector('#inp_texOpa').value),
-                        rotate: PDFLib.degrees(45),
-                    });
-                }
-                catch(e) {
-                    buttonsDefaultState();
-                    showError(true, e);
-                    return;
-                }
-                heightCurr += (textSize * 5) * parseFloat(document.querySelector('#inp_linSpc').value);
+        // Set watermark options
+        let heightCurr = -height;
+        let idLine = 0;
+        // Continue drawing text lines to the current page until the desired height is reached
+        while (heightCurr < height) {
+            try {
+                currentPage.drawText(textUserFormat[(++idLine) % textUserFormat.length], {
+                    x: 0,
+                    y: heightCurr,
+                    size: textSize,
+                    font: helveticaFont,
+                    color: PDFLib.rgb(arrColor.r, arrColor.g, arrColor.b),
+                    blendMode: blendMode_IdToString(document.querySelector('#inp_texBld').value),
+                    opacity: parseFloat(document.querySelector('#inp_texOpa').value),
+                    rotate: PDFLib.degrees(45),
+                });
             }
+            catch(e) {
+                buttonsDefaultState();
+                showError(true, e);
+                console.log(e);
+                return;
+            }
+
+            // Update the current line height
+            heightCurr += (textSize * 5) * parseFloat(document.querySelector('#inp_linSpc').value);
         }
 
-        // Convert pdf object to bytes array
-        const pdfBytes = await pdfDoc.save();
-
-        // Convert watermarked pdf pages to png
-        await pdfToPng(_preview, pdfBytes);
-}
-
-function blendMode_IdToString(_val) {
-    let ret = '';
-    switch (_val) {
-        case '1':   ret = 'Difference'; break;
-        case '2':   ret = 'Exclusion';  break;
-        case '3':   ret = 'Multiply';   break;
-        case '4':   ret = 'Overlay';    break;
-        case '5':   ret = 'Screen';     break;
-        case '6':   ret = 'ColorBurn';  break;
-        case '7':   ret = 'ColorDodge'; break;
-        case '8':   ret = 'Darken';     break;
-        case '9':   ret = 'HardLight';  break;
-        case '10':  ret = 'Lighten';    break;
-        case '11':  ret = 'SoftLight';  break;
-        default:    ret = 'Normal';     break;
+        progressBar('update');
     }
-    return ret;
+
+    // Convert pdf object to bytes array
+    const pdfBytes = await pdfDoc.save();
+
+    // Convert watermarked pdf pages to png
+    await processing_PdfToPng(_preview, pdfBytes);
 }
 
-async function pdfToPng(_preview, _pdfBytes) {
-    // 
-    window.data = [];
-    window.totalPages = 0;
-    var PDFJS = window['pdfjs-dist/build/pdf'];
+/**
+ * @blendMode_IdToString
+ * Converts a value to the PDFLib expected value
+ * @param {string} _val      The select DOM value to convert 
+ */
+function blendMode_IdToString(_val) {
+    switch (_val) {
+        case '1':   return 'Difference';
+        case '2':   return 'Exclusion';
+        case '3':   return 'Multiply';
+        case '4':   return 'Overlay';
+        case '5':   return 'Screen';
+        case '6':   return 'ColorBurn';
+        case '7':   return 'ColorDodge';
+        case '8':   return 'Darken';
+        case '9':   return 'HardLight';
+        case '10':  return 'Lighten';
+        case '11':  return 'SoftLight';
+        default:    return 'Normal';
+    }
+}
 
+/**
+ * @processing_PdfToPng
+ * Converts every pages of a PDF to images
+ * @param {bool}      _preview      If true: process the first page and do not engage download, if false: process all pages and engage download
+ * @param {bytearray} _pdfBytes     The PDF data represented as a byte array
+ */
+async function processing_PdfToPng(_preview, _pdfBytes) {
+    // Import the PDFjs lib
+    var PDFJS = window['pdfjs-dist/build/pdf'];
     PDFJS.GlobalWorkerOptions.workerSrc = 'res/dep/pdfjs/pdf.worker.js';
 
-    var loadingTask = await PDFJS.getDocument(_pdfBytes);
+    // Reset data stored from the previous processing
+    window['filipdf'].document.images = {};
+    window['filipdf'].document.pages.total = 0;
 
-    await loadingTask.promise.then(async function(pdf) {
-        var canvasdiv = document.getElementById('canvas');
-        window.totalPages = pdf.numPages;
+    // Retrieve the PDF document
+    var task = await PDFJS.getDocument(_pdfBytes);
 
-        const pagesMax = _preview ? 1 : window.totalPages;
-        for (let pageNumber = 1; pageNumber <= pagesMax; ++pageNumber) {
-            // 
-            await updateProgressBar();
+    // When loaded, convert each PDF pages to images
+    task.promise.then(async function(pdf) {
+        // Store the number of pages for the future images processing
+        window['filipdf'].document.pages.total = pdf.numPages;
+        
+        // Get the HTML canvas container
+        var canvasdiv = document.getElementById('canvas-container');
 
-            // 
-            await pdf.getPage(pageNumber).then(async function(page) {
-                var scale = parseFloat(document.querySelector('#inp_imgQly').value);
+        // Retrieve the user specified page size factor
+        var scale = parseFloat(document.querySelector('#inp_imgQly').value);
+
+        // For the first page if preview, else for all the pages
+        const pagesMax = _preview ? 1 : window['filipdf'].document.pages.total;
+        for (let pageID = 1; pageID <= pagesMax; ++pageID) { // The first page is referenced as 1
+            // Process the specified PDF page
+            /* await */ pdf.getPage(pageID).then(async function(page) {
+                // Create a HTML canvas
+                var img = document.createElement('canvas');
+
+                // If only processing a preview (so the number of pages processed is capped to 1)
+                if (_preview)
+                    // Push the generated image to the HTML canvas container div
+                    canvasdiv.appendChild(img);
+
+                // Retrieve the size of the viewport in accordance with the applied scale
                 var viewport = page.getViewport({ scale: scale });
 
-                var canvas = document.createElement('canvas');
-
-                if (_preview)
-                    canvasdiv.appendChild(canvas);
-
                 // Prepare canvas using PDF page dimensions
-                var context = canvas.getContext('2d');
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-
-                if (window.devicePixelRatio > 1) {
-                    canvas.width *= window.devicePixelRatio;
-                    canvas.height *= window.devicePixelRatio;
-
-                    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-                }
-
-                window.pageWidth = viewport.width;
-                window.pageHeight = viewport.height;
+                var imgctx = img.getContext('2d');
+                img.width = viewport.width;
+                img.height = viewport.height;
 
                 // Render PDF page into canvas context
-                var renderContext = { canvasContext: context, viewport: viewport };
+                var rndctx = { canvasContext: imgctx, viewport: viewport };
 
-                // 
-                var renderTask = await page.render(renderContext);
+                // Engage conversion
+                var renderTask = await page.render(rndctx);
                 
-                // 
-                await renderTask.promise.then(async function() {
-                    // 
-                    window.data[pageNumber - 1] = canvas.toDataURL('image/png');
+                progressBar('update');
 
-                    // 
-                    if (++window.pageProcessedCount == pagesMax) {
-                        // 
+                // Convert the PDF page to an image
+                /* await */ renderTask.promise.then(async function() {
+                    // Store the page data and details
+                    window['filipdf'].document.images[pageID - 1] = {};
+                    window['filipdf'].document.images[pageID - 1].width = viewport.width;
+                    window['filipdf'].document.images[pageID - 1].height = viewport.height;
+                    window['filipdf'].document.images[pageID - 1].data = img.toDataURL('image/png');
+
+                    // For the last page processing
+                    if (++window['filipdf'].document.pages.processed == pagesMax) {
+                        // Warn the user the window will freeze
                         showAlertExport(true);
 
-                        // 
+                        // Wait for the next frame to display the alert
                         window.requestAnimationFrame(async function() {
 
-                            // Download pdf file
-                            if (!_preview){    
-                                // 
-                                const pdfBytesSave = await pngToPdf(_preview);
-
-                                //
+                            // If the export button has been clicked
+                            if (!_preview){
+                                const pdfBytesSave = await processing_PngToPdf(_preview);
                                 await pdfDownload(_preview, pdfBytesSave);
                             }
                             
                             buttonsDefaultState();
                         });
                     }
-                    else
-                        // 
-                        await updateProgressBar();
+                    
+                    progressBar('update');
                 });
             });
         }
-    }, function(reason) {
-        console.error(`An error occured: ${reason}`);
+    }, function(e) {
+        console.error(`An error occured: ${e}`);
     });
 }
 
+/**
+ * @buttonsDefaultState
+ * Reset alerts, progress bar and buttons to their initial states
+ */
 function buttonsDefaultState() {
     showAlertExport(false);
 
@@ -480,13 +623,14 @@ function buttonsDefaultState() {
         button.removeAttribute('disabled', 'disabled');
     });
 
-    document.querySelector('#bar_progress').classList.remove('progress-bar-animated');
-    document.querySelector('#bar_progress').classList.remove('bg-danger');
-    document.querySelector('#bar_progress').classList.add('bg-success');
-    document.querySelector('#bar_progress').textContent = translate('bar_progress_finish');
-    document.querySelector('#bar_progress').style.width = '100%';
+    progressBar('finish');
 }
 
+/**
+ * @showAlertExport
+ * Show or hide the export alert
+ * @param {bool} _show      Does the alert has to be shown or hidden
+ */
 function showAlertExport(_show) {
     if (_show)
         document.querySelector('#alrt_xprt').style.display = 'block';
@@ -494,6 +638,12 @@ function showAlertExport(_show) {
         document.querySelector('#alrt_xprt').style.display = 'none';
 }
 
+/**
+ * @showError
+ * Show a message as an alert, or hide it
+ * @param {bool}   _show      Does the alert has to be shown or hidden
+ * @param {string} _line      The message to be shown
+ */
 function showError(_show, _line = '') {
     if (_show) {
         document.querySelector('#err_xprt').style.display = 'block';
@@ -503,9 +653,20 @@ function showError(_show, _line = '') {
         document.querySelector('#err_xprt').style.display = 'none';
 }
 
-async function pngToPdf(_preview) {
+/**
+ * @processing_PngToPdf
+ * Converts an image into an PDF embeded image
+ * @param {bool} _preview      If true: process the first page and do not engage download, if false: process all pages and engage download
+ */
+async function processing_PngToPdf(_preview) {
+    // Retrieve the current date
     let DateNowSave = new Date();
+
+    // Create a new PDF document
     const pdfDocSave = await PDFLib.PDFDocument.create();
+
+    // Override meta data, in case the user does not want to share them to somebody,
+    // which is probably the case since the user want to add a watermark to the document to share
     pdfDocSave.setTitle('');
     pdfDocSave.setAuthor('');
     pdfDocSave.setSubject('');
@@ -515,36 +676,44 @@ async function pngToPdf(_preview) {
     pdfDocSave.setCreationDate(DateNowSave);
     pdfDocSave.setModificationDate(DateNowSave);
     
-    let idImage = 0;
-    const pagesCount = _preview ? 1 : window.totalPages;
+    // Draw all images onto the new PDF pages
+    const pagesCount = _preview ? 1 : window['filipdf'].document.pages.total;
     for (let i = 0; i < pagesCount; ++i) {
-        // 
-        await updateProgressBar();
-
-        // 
-        const newPage = await pdfDocSave.addPage([window.pageWidth, window.pageHeight]);
+        // Add a new page to the new PDF document
+        const newPage = await pdfDocSave.addPage([window['filipdf'].document.images[i].width, window['filipdf'].document.images[i].height]);
+        // Retrieve an embedPng object
+        const img = await pdfDocSave.embedPng(window['filipdf'].document.images[i].data);
         
-        const img = await pdfDocSave.embedPng(window.data[idImage]);
-        
+        // Embed the embedPng to the new page
         newPage.drawImage(img, {
             x: 0,
             y: 0,
-            width: window.pageWidth,
-            height: window.pageHeight,
+            width: window['filipdf'].document.images[i].width,
+            height: window['filipdf'].document.images[i].height,
             blendMode: 'Normal',
         });
 
-        ++idImage;
+        progressBar('update');
     }
 
-    return await pdfDocSave.save()
+    return await pdfDocSave.save();
 }
 
+/**
+ * @pdfDownload
+ * Force the download of the new generated PDF document
+ * @param {bool}       _preview     If true: process the first page and do not engage download, if false: process all pages and engage download
+ * @param {bytesarray} _pdfBytes    The new PDF document under a bytes array form
+ */
 async function pdfDownload(_preview, _pdfBytes) {
+    // If the export button has been clicked
     if (_preview === false) {
-        let filename = window.userFile.name;
+        // Retrieve the name of the original PDF document
+        let filename = window['filipdf'].userFile.name;
+        // Add a label to differentiate the original and the watermarked documents
         filename = `${filename.substring(0, filename.lastIndexOf('.'))}__watermark.pdf`;
 
+        // Engage the download of the generated PDF
         var blob = new Blob([_pdfBytes], {type: "application/pdf"});
         var link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);

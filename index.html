@@ -12,138 +12,131 @@
     <script src="res/scripts.js"></script>
 </head>
 <body>
-<nav class="navbar bg-body-tertiary border-bottom border-body">
-    <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">
-            <img src="res/img/favicon.png" width="28" height="32" class="d-inline-block align-text-top mx-3">
-            FiliPDF
-        </span>
-        <span class="navbar-text mx-3">
-            <span class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"><a class="lnk_github" href="https://github.com/PhilJbt/FiliPDF" target="_blank"><i class="bi bi-github"></i></a></span>
-        </span>
-    </div>
-</nav>
-<div class="m-3">
-    <div class="d-flex flex-column mb-5">
-        <h1 id="bdy_ttl" class="trans"></h1>
-        <h5 id="bdy_dsc" class="trans"></h5>
-        <h6 id="bdy_add" class="trans"></h6>
-    </div>
-
-    <div class="d-flex flex-row">
-        
-        <div class="p-0 m-0">
-            <div class="d-flex flex-column gap-3 ms-5 bar_sticky mnu_bar">
-
-                <div class="mb-5">
-                    <input class="form-control" type="file" id="inp_filPck" name="inp_filPck" accept=".pdf"/>
-                    <label class="trans" for="inp_filPck" id="inp_filPck_lbl"></label>
-                </div>
-                
-
-                <div class="form-floating mb-1">
-                    <input type="text" class="form-control" id="inp_texRec" placeholder="name@example.com">
-                    <label class="trans" for="inp_texRec" id="inp_texRec_lbl" data-content=""></label>
-                </div>
-
-                <div class="form-floating mb-1">
-                    <input type="text" class="form-control" id="inp_texSbj" placeholder="name@example.com">
-                    <label class="trans" for="inp_texSbj" id="inp_texSbj_lbl" data-content=""></label>
-                </div>
-
-                <div>
-                    <input class="form-control" class="lbl_cnt" type="range" id="inp_fntSiz" min="10" max="40" step="5" value="15" />
-                    <label class="trans lbl_cnt" for="inp_fntSiz" id="inp_fntSiz_lbl" data-content=""></label>
-                </div>
-
-                <div>
-                    <input class="form-control" class="lbl_cnt" type="range" id="inp_linSpc" min="0.5" max="3" step="0.1" value="1" />
-                    <label class="trans lbl_cnt" for="inp_linSpc" id="inp_linSpc_lbl" data-content=""></label>
-                </div>
-
-                <div id="tltp_imgQly" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="">
-                    <input class="form-control" class="lbl_cnt" type="range" id="inp_imgQly" min="1" max="5" step="1" value="2" />
-                    <label class="trans lbl_cnt" for="inp_imgQly" id="inp_imgQly_lbl" data-content=""></label>
-                </div>
-
-                <div>
-                    <input class="form-control" class="lbl_cnt" type="date" id="inp_date" />
-                    <label class="trans" for="inp_date" id="inp_date_lbl" data-content=""></label>
-                </div>
-
-
-                <div class="btn-group btn-group-lg flex-row justify-content-center mt-5" role="group">
-                    <button type="button" onclick="proc(true)" id="inp_prev" class="btn btn-primary trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="" disabled></button>
-                    <button type="button" onclick="proc(false)" id="inp_save" class="btn btn-success trans" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="" disabled></button>
-                </div>
-
-
-                <div class="d-flex flex-column">
-                    <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 30px">
-                        <div class="progress-bar progress-bar-striped" id="bar_progress" style="width: 0%">0%</div>
-                    </div>
-
-                    <div class="alert alert-info" id="alrt_xprt" role="alert"></div>
-                    <div class="alert alert-danger" id="err_xprt" role="alert"></div>
-                </div>     
-                
-
-                
-                <div class="btn-group flex-row justify-content-center mt-5 mb-2">
-                    <div class="input-group">
-                        <div class="input-group-text trans" id="btn_presets"></div>
-                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(1)" id="prset1_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">1</button>
-                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(2)" id="prset2_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">2</button>
-                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(3)" id="prset3_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">3</button>
-                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(4)" id="prset4_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">4</button>
-                        <button type="button" class="btn btn-outline-secondary prset_dsc" onclick="setPreset(5)" id="prset5_dsc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">5</button>
-                    </div>
-                </div>
-
-                <div>
-                    <input class="form-control" class="lbl_cnt" type="color" id="inp_fntClr" name="inp_fntClr" value="#00ff00" />
-                    <label class="trans lbl_cnt" for="inp_fntClr" id="inp_fntClr_lbl" data-content=""></label>
-                </div>
-                
-                <div class="form-floating">
-                    <select class="form-select" id="inp_texBld">
-                        <option id="slc_nrml" class="trans" value="0"></option>
-                        <option id="slc_diff" class="trans" value="1" selected></option>
-                        <option id="slc_xclu" class="trans" value="2"></option>
-                        <option id="slc_mlti" class="trans" value="3"></option>
-                        <option id="slc_ovrl" class="trans" value="4"></option>
-                        <option id="slc_scrn" class="trans" value="5"></option>
-                        <option id="slc_clrb" class="trans" value="6"></option>
-                        <option id="slc_clrd" class="trans" value="7"></option>
-                        <option id="slc_drkn" class="trans" value="8"></option>
-                        <option id="slc_ligh" class="trans" value="9"></option>
-                        <option id="slc_ligt" class="trans" value="10"></option>
-                        <option id="slc_ligs" class="trans" value="11"></option>
-                    </select>
-                    <label class="trans" for="inp_texBld" id="inp_texBld_lbl"></label>
-                    <p class="txt_dsc"><a id="inp_texBld_dsc" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-light" target="_blank" href="https://github.com/PhilJbt/FiliPDF/blob/main/docs/options/blendmode.md"></a></p>
-                </div>
-                
-                <div>
-                    <input class="form-control" class="lbl_cnt" type="range" id="inp_texOpa" min="0" max="1" step="0.1" value="0.3" />
-                    <label class="trans lbl_cnt mb-5" for="inp_texOpa" id="inp_texOpa_lbl" data-content=""></label><p class="txt_dsc"><a id="inp_texBld_dsc" class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-light" target="_blank" href="https://github.com/PhilJbt/FiliPDF/blob/main/docs/options/opacity.md"></a></p>
-                </div>
-
-            </div>
-        
+    <!-- Navbar -->
+    <nav class="navbar bg-body-tertiary border-bottom border-body">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <img src="res/img/favicon.png" width="28" height="32" class="d-inline-block align-text-top mx-3">
+                FiliPDF
+            </span>
+            <span class="navbar-text mx-3">
+                <span class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"><a class="lnk_github" href="https://github.com/PhilJbt/FiliPDF" target="_blank"><i class="bi bi-github"></i></a></span>
+            </span>
         </div>
-
-        <div class="flex-shrink-1 p-0 m-0">
-            <div class="d-flex flex-column mx-3 ms-5 bar_sticky">
-                <p class="lead mb-3 trans" id="txt_prev"></p>
-                <div id="canvas">
-                    <img id="img_example" src="" />
+    </nav>
+    <!-- Container -->
+    <div class="m-3">
+        <!-- Title and descriptions -->
+        <div class="d-flex flex-column mb-5">
+            <h1 id="bdy_ttl" class="trans-txc"></h1>
+            <h5 id="bdy_dsc" class="trans-txc"></h5>
+            <h6 id="bdy_add" class="trans-txc"></h6>
+        </div>
+        <!-- Container -->
+        <div class="d-flex flex-row">
+            <div class="p-0 m-0">
+                <div class="d-flex flex-column gap-3 ms-5 bar_sticky mnu_bar">
+                    <!-- Input -->
+                    <div class="mb-5">
+                        <input class="form-control" type="file" id="inp_filPck" name="inp_filPck" accept=".pdf"/>
+                        <label class="trans-txc" for="inp_filPck" id="inp_filPck_lbl"></label>
+                    </div>
+                    <!-- Text 1 -->
+                    <div class="form-floating mb-1">
+                        <input type="text" class="form-control" id="inp_texRec" placeholder="" />
+                        <label class="trans-txc" for="inp_texRec" id="inp_texRec_lbl" data-content=""></label>
+                    </div>
+                    <!-- Text 2 -->
+                    <div class="form-floating mb-1">
+                        <input type="text" class="form-control" id="inp_texSbj" placeholder="" />
+                        <label class="trans-txc" for="inp_texSbj" id="inp_texSbj_lbl" data-content=""></label>
+                        <p id="inp_texSbj_dsc" class="txt_dsc trans-inh link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-light"></p>
+                    </div>
+                    <!-- Font size -->
+                    <div>
+                        <input class="form-control" class="lbl_cnt" type="range" id="inp_fntSiz" min="10" max="40" step="5" value="15" />
+                        <label class="trans-txc lbl_cnt" for="inp_fntSiz" id="inp_fntSiz_lbl" data-content=""></label>
+                    </div>
+                    <!-- Line spacing -->
+                    <div>
+                        <input class="form-control" class="lbl_cnt" type="range" id="inp_linSpc" min="0.5" max="3" step="0.1" value="1" />
+                        <label class="trans-txc lbl_cnt" for="inp_linSpc" id="inp_linSpc_lbl" data-content=""></label>
+                    </div>
+                    <!-- Image resolution -->
+                    <div id="tltp_imgQly" class="trans-dat" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="">
+                        <input class="form-control" class="lbl_cnt" type="range" id="inp_imgQly" min="1" max="5" step="1" value="2" />
+                        <label class="trans-txc lbl_cnt" for="inp_imgQly" id="inp_imgQly_lbl" data-content=""></label>
+                    </div>
+                    <!-- Date -->
+                    <div>
+                        <input class="form-control" class="lbl_cnt" type="date" id="inp_date" />
+                        <label class="trans-txc" for="inp_date" id="inp_date_lbl" data-content=""></label>
+                    </div>
+                    <!-- Preview / Save -->
+                    <div class="btn-group btn-group-lg flex-row justify-content-center mt-5" role="group">
+                        <button type="button" onclick="processing(true)" id="inp_prvw" class="btn btn-primary trans-dat trans-txc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="" disabled></button>
+                        <button type="button" onclick="processing(false)" id="inp_save" class="btn btn-success trans-dat trans-txc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="" disabled></button>
+                    </div>
+                    <!-- Alerts -->
+                    <div class="d-flex flex-column">
+                        <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 30px">
+                            <div class="progress-bar" id="bar_progress" style="width: 0%">0%</div>
+                        </div>
+                        <div class="alert alert-info trans-inh" id="alrt_xprt" role="alert"></div>
+                        <div class="alert alert-danger trans-inh" id="err_xprt" role="alert"></div>
+                    </div>
+                    <!-- Presets -->
+                    <div class="btn-group flex-row justify-content-center mt-5 mb-2">
+                        <div class="input-group">
+                            <div class="input-group-text trans-txc" id="btn_presets"></div>
+                            <button type="button" class="btn btn-outline-secondary trans-dat" onclick="setPreset(1)" id="prset1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">1</button>
+                            <button type="button" class="btn btn-outline-secondary trans-dat" onclick="setPreset(2)" id="prset2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">2</button>
+                            <button type="button" class="btn btn-outline-secondary trans-dat" onclick="setPreset(3)" id="prset3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">3</button>
+                            <button type="button" class="btn btn-outline-secondary trans-dat" onclick="setPreset(4)" id="prset4" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">4</button>
+                            <button type="button" class="btn btn-outline-secondary trans-dat" onclick="setPreset(5)" id="prset5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="">5</button>
+                        </div>
+                    </div>
+                    <!-- Text color -->
+                    <div>
+                        <input class="form-control" class="lbl_cnt" type="color" id="inp_fntClr" name="inp_fntClr" value="#00ff00" />
+                        <label class="trans-txc lbl_cnt" for="inp_fntClr" id="inp_fntClr_lbl" data-content=""></label>
+                    </div>
+                    <!-- Blend modes -->
+                    <div class="form-floating">
+                        <select class="form-select" id="inp_texBld">
+                            <option id="slc_nrml" class="trans-txc" value="0"></option>
+                            <option id="slc_diff" class="trans-txc" value="1" selected></option>
+                            <option id="slc_xclu" class="trans-txc" value="2"></option>
+                            <option id="slc_mlti" class="trans-txc" value="3"></option>
+                            <option id="slc_ovrl" class="trans-txc" value="4"></option>
+                            <option id="slc_scrn" class="trans-txc" value="5"></option>
+                            <option id="slc_clrb" class="trans-txc" value="6"></option>
+                            <option id="slc_clrd" class="trans-txc" value="7"></option>
+                            <option id="slc_drkn" class="trans-txc" value="8"></option>
+                            <option id="slc_ligh" class="trans-txc" value="9"></option>
+                            <option id="slc_ligt" class="trans-txc" value="10"></option>
+                            <option id="slc_ligs" class="trans-txc" value="11"></option>
+                        </select>
+                        <label class="trans-txc" for="inp_texBld" id="inp_texBld_lbl"></label>
+                        <p class="txt_dsc"><a id="inp_texBld_dsc" class="trans-inh link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-light" target="_blank" href="https://github.com/PhilJbt/FiliPDF/blob/main/docs/options/blendmode.md"></a></p>
+                    </div>
+                    <!-- Text opacity -->
+                    <div>
+                        <input class="form-control" class="lbl_cnt" type="range" id="inp_texOpa" min="0" max="1" step="0.1" value="0.3" />
+                        <label class="trans-txc lbl_cnt mb-5" for="inp_texOpa" id="inp_texOpa_lbl" data-content=""></label><p class="txt_dsc"><a id="inp_texBld_dsc" class="trans-inh link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover fw-light" target="_blank" href="https://github.com/PhilJbt/FiliPDF/blob/main/docs/options/opacity.md"></a></p>
+                    </div>
+                </div>
+            </div>
+            <!-- Image preview -->
+            <div class="flex-shrink-1 p-0 m-0">
+                <div class="d-flex flex-column mx-3 ms-5 bar_sticky">
+                    <p class="lead mb-3 trans-txc" id="txt_prvw"></p>
+                    <div id="canvas-container">
+                        <img id="img_example" class="trans-src" src="" />
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
-
-</div>
 </body>
 </html>
