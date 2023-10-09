@@ -153,7 +153,7 @@ function setOptionsPreset(_id) {
         // Common document
         default:
             document.querySelector('#inp_fntClr').value = '#7f00ff';
-            document.querySelector('#inp_texBld').value = 6;
+            document.querySelector('#inp_texBld').value = 3;
             document.querySelector('#inp_texOpa').value = .3;
             break;
         // Colorful document
