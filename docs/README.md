@@ -22,8 +22,8 @@ Les dépendances sont directement intégrées afin de prévenir tout suivi éven
 
 ## DÉPENDANCES
 - Bootstrap (5.3.2)
-- JQuery (3.3.1)
-- PdfLib (1.17.1)
-- PdfJs (3.11.174)
-- Fontkit (1.1.1)
+- jQuery (3.3.1)
+- PDFLib (1.17.1)
+- PDF.js (3.11.174)
+- fontkit (1.1.1)
 - Noto Latin, Greek, Cyrillic (2.013)
