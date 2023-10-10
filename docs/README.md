@@ -1,4 +1,4 @@
-# <img src="../res/img/favicon.png" alt="filipdf logo" width="28"  height="32"/> FiliPDF - Web app ajouter un filigrane à un fichier PDF
+# <img src="../res/img/favicon.png" alt="filipdf logo" width="28"  height="32"/> FiliPDF - Web app pour ajouter un filigrane à un PDF
 
 ## PRÉSENTATION
 Cette page web statique opère en autonomie totale sur l'ordinateur local, sans nécessiter de connexion à un quelconque serveur, ce qui garantit la confidentialité des documents manipulées.  
