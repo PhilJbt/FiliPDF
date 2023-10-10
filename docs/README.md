@@ -1,7 +1,7 @@
 # FiliPDF <img src="../res/img/favicon.png" alt="filipdf logo" width="28"  height="32"/>
 
 ### FiliPDF est une application web qui permet d'ajouter un filigrane aux pages d'un fichier PDF.
-Cette page web statique opère en autonomie totale sur l'ordinateur local, sans nécessiter de connexion à un quelconque serveur, ce qui garantit la sécurité des données manipulées. Les dépendances sont auto-hebergées de manière autonome afin de prévenir tout suivi éventuel du trafic ou des utilisateurs.
+Cette page web statique opère en autonomie totale sur l'ordinateur local, sans nécessiter de connexion à un quelconque serveur, ce qui garantit la sécurité des données manipulées. Les dépendances sont directement intégrées afin de prévenir tout suivi éventuel du trafic ou des utilisateurs.
 
 ![](demo.gif)
 
