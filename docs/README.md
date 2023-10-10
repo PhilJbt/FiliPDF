@@ -11,4 +11,5 @@ Cette page web statique opère en autonomie totale sur l'ordinateur local, sans 
 
 - Chaque page est convertie en image pour prévenir toute tentative d'édition du PDF visant à supprimer manuellement la couche contenant le filigrane ;
 - Diverses options sont proposées, notamment la possibilité de régler l'opacité du texte, afin de [réduire au maximum l'efficacité](options/opacity.md) des intelligences artificielles chargées de supprimer les filigranes ;
-- Les PDF avec des pages de tailles variables [sont pris en charge](features/multiplesize.md).
+- Les PDF avec des pages de tailles variables [sont pris en charge](features/multiplesize.md) ;
+- Les alphabets latin, greek et cyrillic [sont pris en charge](features/glyphs.md).

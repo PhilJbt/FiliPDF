@@ -77,9 +77,9 @@ label.lbl_cnt:after {
 
 /* Customize the progress bar animation */
 .progress-bar {
-    transition-duration: .25s !important;
+    transition-duration: 0s !important;
 }
 
 .progress-bar-animated {
-    animation: 0.3s linear infinite progress-bar-stripes !important;
+    animation: .5s linear infinite progress-bar-stripes !important;
 }

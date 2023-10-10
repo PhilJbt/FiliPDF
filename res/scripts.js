@@ -74,7 +74,6 @@ function init() {
             },
             pages: {
                 total: 0,
-                processed: 0,
             },
         },
     };
@@ -229,8 +228,10 @@ function translate(_id) {
                 case 'inp_save':            return 'Sauvegarder';
                 case 'inp_save_tlp':        return 'Enregistre le PDF avec filigrane.';
                 case 'bar_progress_finish': return 'Terminé !';
-                case 'alert_export':        return 'Veuillez patientez, même si la page se fige.';
+                case 'bar_progress_init':   return 'Lancement...';
+                case 'alert_export':        return 'Veuillez patienter, même si la page se fige.';
                 case 'alert_error':         return 'Une erreur s\'est produite';
+                case 'alert_glyph':         return 'Certains caractères peuvent ne pas être pris en charge.';
                 case 'inp_texBld_dsc':      return '(explications)';
                 case 'img_example':         return 'res/img/example_fr.jpg';
                 case 'prset1_tlp':          return 'Défaut';
@@ -277,8 +278,10 @@ function translate(_id) {
                 case 'inp_save':            return 'Save';
                 case 'inp_save_tlp':        return 'Saves PDF with watermark.';
                 case 'bar_progress_finish': return 'Finished!';
+                case 'bar_progress_init':   return 'Initializing...';
                 case 'alert_export':        return 'Please wait, even if the page freezes.';
                 case 'alert_error':         return 'An error occured';
+                case 'alert_glyph':         return 'Some characters could not been supported.';
                 case 'inp_texBld_dsc':      return '(explanations)';
                 case 'img_example':         return 'res/img/example_en.jpg';
                 case 'prset1_tlp':          return 'Default';
@@ -302,32 +305,52 @@ function progressBar(_pass) {
     // Before each new processing
     if (_pass === 'reset') {
         bar.classList.remove('bg-success');
+        bar.classList.remove('bg-info');
         bar.classList.add('bg-danger');
+
         bar.classList.add('progress-bar-animated');
         bar.classList.add('progress-bar-striped');
-        bar.classList.remove('progress-bar');
-        bar.style.width = '0%';
+
+        bar.style.width = '100%';
         bar.textContent = '0%';
     }
     // At the start of each new treatment
-    else if (_pass === 'engage')
+    else if (_pass === 'engage') {   
+        bar.classList.remove('bg-success');
+        bar.classList.remove('bg-info');
+        bar.classList.add('bg-danger');
+
         bar.classList.add('progress-bar'); // Enable back width transition after reset width in 1 frame
+    }
     // Update the width of the progress bar
     else if (_pass === 'update') {
+        bar.classList.remove('bg-success');
+        bar.classList.remove('bg-info');
+        bar.classList.add('bg-danger');
+
         let valueProgress = ((++window['filipdf'].progressTick.current / window['filipdf'].progressTick.maximum) * 100).toFixed(0);
-        let prcntProgress = `${valueProgress}%`;
-        
-        bar.style.width = prcntProgress;
-        bar.textContent = prcntProgress;
+        bar.textContent = `${valueProgress}%`;
     }
     // Show the progress bar in its final state
     else if (_pass === 'finish') {
         bar.classList.remove('progress-bar-animated');
         bar.classList.remove('progress-bar-striped');
+
         bar.classList.remove('bg-danger');
+        bar.classList.remove('bg-warning');
         bar.classList.add('bg-success');
+
         bar.textContent = translate('bar_progress_finish');
-        //bar.style.width = '100%';
+    }
+    // 
+    else {
+        bar.classList.remove('bg-danger');
+        bar.classList.remove('bg-success');
+        bar.classList.add('bg-info');
+
+        bar.classList.add('progress-bar');
+
+        bar.textContent = _pass;
     }
 }
 
@@ -361,8 +384,11 @@ function hexToRgb(hex) {
  */
 async function processing(_preview) {
     // Reset components to their initial states
-    showMessage(false);
-    progressBar('reset'); // Remove its class to disable width transition
+    progressBar('reset');
+    progressBar(translate('bar_progress_init'));
+
+    // 
+    notificate(translate('alert_export'), 'primary');
 
     // Disable all inputs
     document.querySelectorAll('input, select, button').forEach((button) => {
@@ -374,16 +400,13 @@ async function processing(_preview) {
         document.querySelector('#canvas-container').innerHTML = '';
 
     // Once a new frame has been drawn (with the progress bar empty)
-    window.requestAnimationFrame(async function() {
-        progressBar('engage'); // Add its class to enable the width back
-        
+    await window.requestAnimationFrame(async function() {
         // Retrieve the user file
         let userFile = document.querySelector('#inp_filPck').files[0];
 
         // Release the previously generated or stored data
         window['filipdf'].userFile = userFile;
         window['filipdf'].progressTick.current = 0;
-        window['filipdf'].document.pages.processed = 0;
     
         // Start the PDF global processing
         var reader = await new FileReader();
@@ -423,9 +446,9 @@ async function processing_TextToPdf(_preview, _readerEvent) {
     // Store the maximum number of ticks for the progress bar
     // depending on the type of action (first page preview or full export)
     if (_preview)
-        window['filipdf'].progressTick.maximum = 3;
+        window['filipdf'].progressTick.maximum = 2;
     else
-        window['filipdf'].progressTick.maximum = pages.length * 4;
+        window['filipdf'].progressTick.maximum = pages.length * 3;
 
     // Get the current day date
     let dateNow = (new Date(document.querySelector('#inp_date').value)).toLocaleDateString();
@@ -464,7 +487,7 @@ async function processing_TextToPdf(_preview, _readerEvent) {
         }
         catch(e) {
             buttonsDefaultState();
-            showMessage(true, 'alert-danger', `${translate('alert_error')}: ${e}`);
+            notificate(`${translate('alert_error')}: ${e}`, 'danger');
             return;
         }
 
@@ -477,6 +500,8 @@ async function processing_TextToPdf(_preview, _readerEvent) {
         } while (textWidthRotated < widthMax);
         textLinesFormat.push(lineConcat);
     });
+
+    progressBar('engage'); // Add its class to enable the width back
 
     // Write text on all pages
     for (let i = 0; i < pagesCount; ++i) {
@@ -509,7 +534,7 @@ async function processing_TextToPdf(_preview, _readerEvent) {
             }
             catch(e) {
                 buttonsDefaultState();
-                showMessage(true, 'alert-danger', `${translate('alert_error')}: ${e}`)
+                notificate(`${translate('alert_error')}: ${e}`, 'danger');
                 return;
             }
 
@@ -568,7 +593,7 @@ async function processing_PdfToPng(_preview, _pdfBytes) {
     var task = await PDFJS.getDocument(_pdfBytes);
 
     // When loaded, convert each PDF pages to images
-    task.promise.then(async function(pdf) {
+    await task.promise.then(async function(pdf) {
         // Store the number of pages for the future images processing
         window['filipdf'].document.pages.total = pdf.numPages;
         
@@ -582,7 +607,7 @@ async function processing_PdfToPng(_preview, _pdfBytes) {
         const pagesMax = _preview ? 1 : window['filipdf'].document.pages.total;
         for (let pageID = 1; pageID <= pagesMax; ++pageID) { // The first page is referenced as 1
             // Process the specified PDF page
-            /* await */ pdf.getPage(pageID).then(async function(page) {
+            await pdf.getPage(pageID).then(async function(page) {
                 // Create a HTML canvas
                 var img = document.createElement('canvas');
 
@@ -601,14 +626,14 @@ async function processing_PdfToPng(_preview, _pdfBytes) {
 
                 // Render PDF page into canvas context
                 var rndctx = { canvasContext: imgctx, viewport: viewport };
-
-                // Engage conversion
-                var renderTask = await page.render(rndctx);
                 
                 progressBar('update');
 
+                // Engage conversion
+                var renderTask = await page.render(rndctx);
+
                 // Convert the PDF page to an image
-                /* await */ renderTask.promise.then(async function() {
+                await renderTask.promise.then(async function() {
                     // Store the page data and details
                     window['filipdf'].document.images[pageID - 1] = {};
                     window['filipdf'].document.images[pageID - 1].width = viewport.width;
@@ -616,12 +641,9 @@ async function processing_PdfToPng(_preview, _pdfBytes) {
                     window['filipdf'].document.images[pageID - 1].data = img.toDataURL('image/png');
 
                     // For the last page processing
-                    if (++window['filipdf'].document.pages.processed == pagesMax) {
-                        // Warn the user the window will freeze
-                        showMessage(true, 'alert-info', translate('alert_export'));
-
+                    if (pageID == pagesMax) {
                         // Wait for the next frame to display the alert
-                        window.requestAnimationFrame(async function() {
+                        await window.requestAnimationFrame(async function() {
 
                             // If the export button has been clicked
                             if (!_preview){
@@ -630,10 +652,11 @@ async function processing_PdfToPng(_preview, _pdfBytes) {
                             }
                             
                             buttonsDefaultState();
+
+                            // Hide all notidications
+                            $('.toast').hide();
                         });
                     }
-                    
-                    progressBar('update');
                 });
             });
         }
@@ -647,38 +670,11 @@ async function processing_PdfToPng(_preview, _pdfBytes) {
  * Reset alerts, progress bar and buttons to their initial states
  */
 function buttonsDefaultState() {
-    showMessage(false);
-
     document.querySelectorAll('input, select, button').forEach((button) => {
         button.removeAttribute('disabled', 'disabled');
     });
 
     progressBar('finish');
-}
-
-/**
- * @showMessage
- * Show a an alert message to the user, or hide it
- * @param {bool}   _show      Does the alert has to be shown or hidden
- * @param {string} _line      The message to be shown
- */
-function showMessage(_show, _type = '', _line = '') {
-    let alert = document.querySelector('#alert_message');
-    if (_show) {
-        let icon = '';
-        switch(_type) {
-            case 'alert-info':   icon = '<i class="bi bi-info-circle-fill"></i>';          break;
-            case 'alert-danger': icon = '<i class="bi bi-exclamation-triangle-fill"></i>'; break;
-        }
-
-        alert.classList.remove('alert-info');
-        alert.classList.remove('alert-danger');
-        alert.classList.add(_type);
-        alert.innerHTML = `${icon} ${_line}`;
-        alert.style.display = 'block';
-    }
-    else
-        alert.style.display = 'none';
 }
 
 /**
@@ -751,66 +747,41 @@ async function pdfDownload(_preview, _pdfBytes) {
 }
 
 /**
- * @getTextLanguage
- * Get the name of the language of the given text
- * @param {string} _text     The user text to check
+ * @notificate
+ * Notify the user with a important message
+ * @param {string} _text    Message to display
+ * @param {string} _type    Type of the notification, has to fit text-bg-* toast bootstrap class name
  */
-function getTextLanguage(_text) {
-	let text = _text.replace(/\s/g, '');
+function notificate(_text, _type) {
+    // Get div containign all toasts
+    const container = document.querySelector('.toast-container');
 
+    // Create a new HTML element
+    let frag = document.createElement("div");
+    frag.innerHTML = `
+    <div class="toast show align-items-center text-bg-${_type} border-0 m-2" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+        <div class="toast-body">
+            ${_text}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+    `.trim();
 
-    /*
-        French
-        English
-        Spanish
-        Italian
-        Portuguese
-        Romanian
-        
-        Arabic
-
-        Japanese
-        Korean
-
-        Russian
-        
-        Hindi
-        
-        
-        Bengali
-        Indonesian
-        Turkish
-        Bulgarian
-        Tamil
-        Chinese
-        Vietnamese
-        Telugu
-        Urdu
-        Punjabi
-        Javanese
-        Marathi
-        Nepali
-
-    */
-	var langdic = {
-	    "Arabic" : /[\u0600-\u06FF]/,
-	    "Persian" : /[\u0750-\u077F]/,
-	    "Hebrew" : /[\u0590-\u05FF]/,
-	    "Syriac" : /[\u0700-\u074F]/,
-	    "Bengali" : /[\u0980-\u09FF]/,
-	    "Ethiopic" : /[\u1200-\u137F]/,
-	    "Greek and Coptic" : /[\u0370-\u03FF]/,
-	    "Georgian" : /[\u10A0-\u10FF]/,
-	    "Thai" : /[\u0E00-\u0E7F]/,
-	    "Latin" : /^[a-zA-Z]+$/,
-	};
-	const keys = Object.entries(langdic);
-	let res = undefined;
-	Object.entries(langdic).forEach(([key, value]) => {
-		if (value.test(text) === true) {
-		 	res = key;
-            return res;
-		}
-	});
-	return res;
+    // Bind functions depending on toast actions
+    const toast = container.insertAdjacentElement("afterbegin", frag);
+    const script = bootstrap.Toast.getOrCreateInstance(toast, {
+        delay: 15000,
+    });
+    toast.addEventListener('shown.bs.toast', () => {
+        toast.classList.add('show');
+    });
+    toast.addEventListener('hide.bs.toast', () => {
+        toast.classList.remove('show');
+    });
+    toast.addEventListener('hidden.bs.toast', () => {
+        toast.remove();
+    });
+    script.show();
 }

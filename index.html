@@ -9,11 +9,15 @@
     <script type="text/javascript" src="res/dep/pdf-lib/pdf-lib.min.js"></script>
     <script type="text/javascript" src="res/dep/pdfjs/pdf.js"></script>
     <link href="res/dep/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <script src="res/dep/jquery/jquery.slim.min.js"></script>
     <script src="res/dep/bootstrap/bootstrap.bundle.min.js"></script>
     <link href="res/dep/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
     <script src="res/scripts.js"></script>
 </head>
 <body>
+    <!-- Notifications -->
+    <div class="toast-container position-fixed m-3 p-3">
+    </div>
     <!-- Navbar -->
     <nav class="navbar bg-body-tertiary border-bottom border-body">
         <div class="container-fluid">
@@ -74,12 +78,11 @@
                         <button type="button" onclick="processing(true)" id="inp_prvw" class="btn btn-primary trans-dat trans-txc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="" disabled></button>
                         <button type="button" onclick="processing(false)" id="inp_save" class="btn btn-success trans-dat trans-txc" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="" disabled></button>
                     </div>
-                    <!-- Alerts -->
+                    <!-- Progress bar -->
                     <div class="d-flex flex-column">
                         <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 30px">
-                            <div class="progress-bar" id="bar_progress" style="width: 0%">0%</div>
+                            <div class="progress-bar" id="bar_progress" style="width: 0%"></div>
                         </div>
-                        <div class="alert" id="alert_message" role="alert"></div>
                     </div>
                     <!-- Presets -->
                     <div class="btn-group flex-row justify-content-center mt-5 mb-2">
