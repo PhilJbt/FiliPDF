@@ -229,7 +229,7 @@ function translate(_id) {
                 case 'inp_save_tlp':        return 'Enregistre le PDF avec filigrane.';
                 case 'bar_progress_finish': return 'Terminé !';
                 case 'bar_progress_init':   return 'Lancement...';
-                case 'alert_export':        return 'Veuillez patienter, même si la page se fige.';
+                case 'alert_export':        return 'Veuillez patienter, même si la page se fige.<br/>Pour plus d\'efficacité, ne réduisez pas cette page pendant le traitement.';
                 case 'alert_error':         return 'Une erreur s\'est produite';
                 case 'alert_glyph':         return 'Certains caractères peuvent ne pas être pris en charge.';
                 case 'inp_texBld_dsc':      return '(explications)';
@@ -279,7 +279,7 @@ function translate(_id) {
                 case 'inp_save_tlp':        return 'Saves PDF with watermark.';
                 case 'bar_progress_finish': return 'Finished!';
                 case 'bar_progress_init':   return 'Initializing...';
-                case 'alert_export':        return 'Please wait, even if the page freezes.';
+                case 'alert_export':        return 'Please wait, even if the page freezes.<br/>For best results, do not reduce this page during the process.';
                 case 'alert_error':         return 'An error occured';
                 case 'alert_glyph':         return 'Some characters could not been supported.';
                 case 'inp_texBld_dsc':      return '(explanations)';
