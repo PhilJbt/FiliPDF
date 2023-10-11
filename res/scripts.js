@@ -148,8 +148,14 @@ function init_components() {
  */
 function setOptionsPreset(_id) {
     switch(_id) {
-        // Common document
+        // Texts
         default:
+            document.querySelector('#inp_fntClr').value = '#dfff00';
+            document.querySelector('#inp_texBld').value = 3;
+            document.querySelector('#inp_texOpa').value = 1;
+            break;
+        // Scan
+        case 1:
             document.querySelector('#inp_fntClr').value = '#dfff00';
             document.querySelector('#inp_texBld').value = 4;
             document.querySelector('#inp_texOpa').value = 1;
@@ -234,7 +240,9 @@ function translate(_id) {
                 case 'alert_glyph':         return 'Certains caractères peuvent ne pas être pris en charge.';
                 case 'inp_texBld_dsc':      return '(explications)';
                 case 'img_example':         return 'res/img/example_fr.jpg';
-                case 'prset1_tlp':          return 'Défaut';
+                case 'prset0':              return 'Défaut';
+                case 'prset0_tlp':          return 'Polyvalent';
+                case 'prset1_tlp':          return 'Scan générique';
                 case 'prset2_tlp':          return 'Document coloré';
                 case 'prset3_tlp':          return 'Document aux tons clairs';
                 case 'prset4_tlp':          return 'Document aux tons foncés';
@@ -284,7 +292,9 @@ function translate(_id) {
                 case 'alert_glyph':         return 'Some characters could not been supported.';
                 case 'inp_texBld_dsc':      return '(explanations)';
                 case 'img_example':         return 'res/img/example_en.jpg';
-                case 'prset1_tlp':          return 'Default';
+                case 'prset0':              return 'Default';
+                case 'prset0_tlp':          return 'Polyvalent';
+                case 'prset1_tlp':          return 'Usual scan';
                 case 'prset2_tlp':          return 'Colorful document';
                 case 'prset3_tlp':          return 'Document with light tones';
                 case 'prset4_tlp':          return 'Dark-toned document';
