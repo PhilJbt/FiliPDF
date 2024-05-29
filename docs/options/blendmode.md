@@ -1,7 +1,7 @@
 # FiliPDF - Modes de fusion / Blend modes
 
 
-### Normal  
+### Normal
 &#127467;&#127479; Aucun mélange, la couleur de fusion est appliquée par dessus la couleur de base.  
 &#127482;&#127480; No mixing, the fusion color is applied onto the base color.
 
@@ -9,9 +9,9 @@
 
 ***
 
-### Différence  
+### Différence
 &#127467;&#127479; Soustrait la couleur de fusion de la couleur de base, produisant un effet de contraste élevé.  
-### Difference  
+### Difference
 &#127482;&#127480; Subtracts the blend color from the base color, producing a high-contrast effect.
 
 <img src="img/difference.jpg" width="300" height="auto"><img src="img/difference_zoom.jpg" width="300" height="auto">

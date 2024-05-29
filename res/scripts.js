@@ -592,15 +592,15 @@ function blendMode_IdToString(_val) {
  */
 async function processing_PdfToPng(_preview, _pdfBytes) {
     // Import the PDFjs lib
-    var PDFJS = window['pdfjs-dist/build/pdf'];
-    PDFJS.GlobalWorkerOptions.workerSrc = 'res/dep/pdfjs/pdf.worker.js';
+    var { pdfjsLib } = globalThis;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'res/dep/pdfjs/pdf.worker.mjs';
 
     // Reset data stored from the previous processing
     window['filipdf'].document.images = {};
     window['filipdf'].document.pages.total = 0;
 
     // Retrieve the PDF document
-    var task = await PDFJS.getDocument(_pdfBytes);
+    var task = await pdfjsLib.getDocument(_pdfBytes);
 
     // When loaded, convert each PDF pages to images
     await task.promise.then(async function(pdf) {
