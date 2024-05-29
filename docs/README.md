@@ -5,9 +5,6 @@ Cette page web statique opère en autonomie totale sur l'ordinateur local, sans 
 
 Les dépendances sont directement intégrées afin de prévenir tout suivi éventuel du trafic ou des utilisateurs.  
 
-> [!NOTE]  
-> Il est possible de [télécharger la dernière version de FiliPDF](https://github.com/PhilJbt/FiliPDF/releases/latest/download/FiliPDF.zip) et de la lancer sur son propre ordinateur.
-
 ![](demo.gif)
 
 &#160;
