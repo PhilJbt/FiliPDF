@@ -1,9 +1,3 @@
-> [!CAUTION]  
-> Il est déconseillé d'utiliser cet outil tant que la librairie `PDF.js` n'a pas été mise à jour à une version supérieure à la `4.2.67`.\
-> [[Plus d'informations]](https://codeanlabs.com/blog/research/cve-2024-4367-arbitrary-js-execution-in-pdf-js/)
-
-&#160;
-
 # <img src="../res/img/favicon.png" alt="filipdf logo" width="28"  height="32"/> FiliPDF - Web app pour ajouter un filigrane à un PDF
 
 ## PRÉSENTATION
@@ -30,6 +24,6 @@ Les dépendances sont directement intégrées afin de prévenir tout suivi éven
 - Bootstrap (5.3.2)
 - jQuery (3.3.1)
 - PDFLib (1.17.1)
-- PDF.js (3.11.174)
+- PDF.js (4.3.136)
 - fontkit (1.1.1)
 - Noto Latin, Greek, Cyrillic (2.013)
